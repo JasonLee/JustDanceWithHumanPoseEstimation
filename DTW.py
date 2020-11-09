@@ -1,6 +1,8 @@
 ## Dynamic Time Warping
 import numpy as np
+from numpy.linalg import norm
 import math
+import utils
 
 ## The Output of OpenPose is as folows
 # An array of People which contain a pose keypoint array which is contains x y and confidence
@@ -34,6 +36,7 @@ def dtw(arr1, arr2, window_size=3):
             dtw_matrix[i, j] = cost + last_min
 
     # Get last element which is the similarity
+    print (dtw_matrix)
     return dtw_matrix.flatten()[-1]
 
 
@@ -42,36 +45,15 @@ def dist_func(arr1, arr2):
         print("Lengths of arrays in distance function are not equal")
         return -1
 
-    arr_len = len(arr1)
-    cosine_sim_arr = []
+    arr1 = utils.L2_norm(arr1)
+    arr2 = utils.L2_norm(arr2)
 
-    for i in range(arr_len):
-        # if keypoint hasn't been recognised
-        if not all(i == 0.0 for i in arr1[i]) or not all(i == 0.0 for i in arr2[i]):
-            pass
+    # cosine sim 1 = very similar, 0 not similar
+    # For distance we do 1 - cosine_sim 
+    dist = np.sqrt(2 * (1.0 - cosine_sim_vector(arr1, arr2)))
 
-        cosine_sim_arr.append(cosine_sim_vector(arr1[i], arr2[i]))
+    return dist
 
-    return round(np.mean(cosine_sim_arr))
-
-def cosine_sim_vector(vec1, vec2):
-    x1 = vec1[0]
-    y1 = vec1[1]
-    x2 = vec2[0]
-    y2 = vec2[1]
-
-    mag_A = math.sqrt(x1**2 + y1**2) 
-    mag_B = math.sqrt(x2**2 + y2**2)
-
-    mag_AB = mag_A * mag_B
-    dot_product = (x1 * x2) + (y1 * y2)
-
-    cos_theta = dot_product / mag_AB
-
-    # Floating point error so result is rounded to 3.d.p
-    return round(cos_theta, 3)
-
-# # Testing
-# a1 = [ [[1,1], [1,1], [1,1]], [[1,1], [1,1], [1,1]] ,[[1,1], [2,1], [3,1]] ]
-# a2 = [ [[1,1], [2,1], [3,1]] ]
-# print(dtw(a1, a2))
+def cosine_sim_vector(a, b):
+    cos_sim = np.dot(a, b) / (norm(a)*norm(b))
+    return cos_sim
