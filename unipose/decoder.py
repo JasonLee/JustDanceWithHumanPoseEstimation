@@ -37,8 +37,3 @@ class Decoder(nn.Module):
         x = self.conv2(x)
 
         x = F.interpolate(x, size=input_size, mode='bilinear')
-
-
-decoder = Decoder(11, [1280,720])
-print(decoder)
-    

@@ -9,7 +9,7 @@ from wasp import WASP
 
 class UniPose(nn.Module):
 
-    def __init__(self, num_heatmap):
+    def __init__(self, num_heatmap=16):
         super(UniPose, self).__init__()
         self.wasp = WASP()
         self.resnet = ResNet()
@@ -21,3 +21,9 @@ class UniPose(nn.Module):
         wasp_x = self.wasp(resnet_last)
         x = decoder(wasp_x, resnet_first, x.size()[2:])
 
+if __name__ == "__main__":
+    model = UniPose()
+    model.eval()
+    input = torch.rand(1, 3, 513, 513)
+    output = model(input)
+    print(output.size())
