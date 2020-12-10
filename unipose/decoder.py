@@ -30,10 +30,11 @@ class Decoder(nn.Module):
         lowlvl_feat = self.maxpool(lowlvl_feat)
 
         # Keep same size
-        w = F.interpolate(wasp_feat, size=wasp_feat.shape[2:],mode='bilinear')
-
-        x = torch.cat(lowlvl_feat, w)
+        w = F.interpolate(wasp_feat, size=lowlvl_feat.shape[2:], mode='bilinear', align_corners=True)
+        x = torch.cat((lowlvl_feat, w), dim=1)
 
         x = self.conv2(x)
 
-        x = F.interpolate(x, size=input_size, mode='bilinear')
+        x = F.interpolate(x, size=input_size, mode='bilinear', align_corners=True)
+
+        return x

@@ -19,11 +19,13 @@ class UniPose(nn.Module):
     def forward(self, x):
         resnet_first, resnet_last = self.resnet(x)
         wasp_x = self.wasp(resnet_last)
-        x = decoder(wasp_x, resnet_first, x.size()[2:])
+        x = self.decoder(wasp_x, resnet_first, x.size()[2:])
+
+        return x
 
 if __name__ == "__main__":
     model = UniPose()
     model.eval()
-    input = torch.rand(1, 3, 513, 513)
+    input = torch.rand(1, 3, 1280, 720)
     output = model(input)
     print(output.size())

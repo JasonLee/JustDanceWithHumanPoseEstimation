@@ -63,27 +63,6 @@ class MPIIDataset(Dataset):
     def __len__(self):
         """ Returns length of the dataset """
         return len(self.annotated_images)
-
-    def get_bounding_box(keypoints):
-        box = np.zeros((2,2))
-        min_y = 0
-        max_y = 0
-        min_x = 0
-        max_x = 0
-
-        for i in range(KEYPOINT_NUM):
-            if box[0][0] > keypoints[i][0]:
-                box[0][0] = keypoints[i][0]
-            if box[1][0] <= keypoints[i][0]:
-                box[1][0] = keypoints[i][0]
-
-            if box[0][1] > keypoints[i][1]:
-                box[0][1] = keypoints[i][1]
-            if box[1][1] <= keypoints[i][1]:
-                box[1][1] = keypoints[i][1]
-
-        return min_x, min_y, max_x, max_y
-
     
     def gaussian_heatmap(self, center=(2, 2), image_size=256, sig=1):
         """
