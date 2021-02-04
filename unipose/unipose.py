@@ -26,6 +26,8 @@ class UniPose(nn.Module):
 if __name__ == "__main__":
     model = UniPose()
     model.eval()
-    input = torch.rand(1, 3, 1280, 720)
+    input = torch.rand(1, 3, 368, 368)
     output = model(input)
     print(output.size())
+    print(output.type())
+    print(type(output))

@@ -1,8 +1,11 @@
 import glob
-from torch.utils.data import Dataset
+from torch.utils.data import Dataset, DataLoader, Subset
 from PIL import Image
+import PIL
 from utils import loadmat
 import os
+from torchvision import transforms
+from utils import gaussian_heatmap
 
 import cv2
 import numpy as np
@@ -10,7 +13,8 @@ from math import exp
 
 class MPIIDataset(Dataset):
     # TODO: change size
-    IMAGE_SIZE = 300
+    IMAGE_SIZE = 368
+    JOINT_LEN = 16
 
     def __init__(self, image_path, annotation_path):
         # self.images = sorted(glob.glob(image_path + '/*.*'))
@@ -21,6 +25,8 @@ class MPIIDataset(Dataset):
         self.annotated_images = []
         self.joint_arr = []
         self.root = image_path
+        self.transform = transforms.Compose([transforms.Resize((self.IMAGE_SIZE, self.IMAGE_SIZE), PIL.Image.BICUBIC),
+                                            transforms.ToTensor()])    
 
         for i in range(len(annolist)):
             anno_list_i = annolist[i]
@@ -31,9 +37,15 @@ class MPIIDataset(Dataset):
                 if "annopoints" in annorect:
                     image_name = anno_list_i['image']['name']
                     joints = annorect['annopoints']['point']
+
+                    # 16 Joints
+                    # Joints recognized
+                    if len(sorted(joints, key=lambda k: k['id'])) == 0:
+                        continue
                     
                     # sort based on joint id
                     self.joint_arr.append(sorted(joints, key=lambda k: k['id']))
+
                     self.annotated_images.append({'name': image_name})
 
 
@@ -43,8 +55,16 @@ class MPIIDataset(Dataset):
         new_image = img.resize((self.IMAGE_SIZE, self.IMAGE_SIZE))
         
         joint_heatmaps = []
-
-        for i in range(len(self.joint_arr[index])):
+        tensor_image = self.transform(img)
+        joint_coords = []
+        
+        # Always get 16 joints 
+        for i in range(16):
+            if len(self.joint_arr[index]) < 16 and i >= len(self.joint_arr[index]):
+                joint_coords.append([-1, -1])
+                joint_heatmaps.append(np.zeros((self.IMAGE_SIZE, self.IMAGE_SIZE)))
+                continue
+            
             x = self.joint_arr[index][i]['x']
             y = self.joint_arr[index][i]['y']
 
@@ -52,42 +72,43 @@ class MPIIDataset(Dataset):
             x = round(x * self.IMAGE_SIZE / old_width)
             y = round(y * self.IMAGE_SIZE / old_height)
 
-            self.joint_arr[index][i]['x'] = x
-            self.joint_arr[index][i]['y'] = y
+            joint_coords.append([x, y])
+            joint_heatmaps.append(gaussian_heatmap((x, y), self.IMAGE_SIZE, 3))
 
-
-            joint_heatmaps.append(self.gaussian_heatmap((x, y), self.IMAGE_SIZE, 3))
-
-        return {'image': new_image, 'joints': self.joint_arr[index], 'heatmaps': joint_heatmaps}
+        joint_heatmaps = np.array(joint_heatmaps, dtype=np.float32)
+        joint_coords = np.array(joint_coords, dtype=int)
+        return tensor_image, joint_heatmaps, joint_coords
 
     def __len__(self):
         """ Returns length of the dataset """
         return len(self.annotated_images)
-    
-    def gaussian_heatmap(self, center=(2, 2), image_size=256, sig=1):
-        """
-        It produces single gaussian at expected center
-        :param center:  the mean position (X, Y) - where high value expected
-        :param image_size: The total image size (width, height)
-        :param sig: The sigma value
-        :return:
-        """
-        x_axis = np.linspace(0, image_size-1, image_size) - center[0]
-        y_axis = np.linspace(0, image_size-1, image_size) - center[1]
-        xx, yy = np.meshgrid(x_axis, y_axis)
-        kernel = np.exp(-0.5 * (np.square(xx) + np.square(yy)) / np.square(sig))
 
-        return kernel
+def getTrainingValidationDataLoader(split=0.7, batch_size=4, shuffle=True, num_workers=2, drop_last=True):
+    image_path = "D:\Downloads - SSD\mpii_human_pose_v1\images"
+    anno_path = "D:\Downloads - SSD\mpii_human_pose_v1_u12_2\mpii_human_pose_v1_u12_1.mat"
+
+    fulldata = MPIIDataset(image_path, anno_path)
+    split_len = int(len(fulldata) * split)
+
+    train_split = list(range(0, split_len))
+    val_split = list(range(split_len + 1, len(fulldata), 2))
+
+    train_set = Subset(fulldata, train_split)
+    val_set = Subset(fulldata, val_split)
+
+    training = DataLoader(train_set, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, drop_last=True)
+    validation = DataLoader(val_set, batch_size=batch_size, shuffle=shuffle, num_workers=num_workers, drop_last=True)
+
+    return training, validation
 
 
 
-image_path = "D:\Downloads - SSD\mpii_human_pose_v1\images"
-anno_path = "D:\Downloads - SSD\mpii_human_pose_v1_u12_2\mpii_human_pose_v1_u12_1.mat"
 
-dataset = MPIIDataset(image_path, anno_path)
-print(len(dataset))
-dataset[0]
-# print(dataset[0])
+# image_path = "D:\Downloads - SSD\mpii_human_pose_v1\images"
+# anno_path = "D:\Downloads - SSD\mpii_human_pose_v1_u12_2\mpii_human_pose_v1_u12_1.mat"
+
+# dataset = MPIIDataset(image_path, anno_path)
+# print(len(dataset))
 
 # annotations = loadmat("D:\Downloads - SSD\mpii_human_pose_v1_u12_2\mpii_human_pose_v1_u12_1.mat")
 # annotations = annotations['RELEASE']

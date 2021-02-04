@@ -51,3 +51,60 @@ def loadmat(filename):
         return elem_list
     data = spio.loadmat(filename, struct_as_record=False, squeeze_me=True)
     return _check_keys(data)
+
+def gaussian_heatmap(center=(2, 2), image_size=256, sig=1):
+    """
+    It produces single gaussian at expected center
+    :param center:  the mean position (X, Y) - where high value expected
+    :param image_size: The total image size (width, height)
+    :param sig: The sigma value
+    :return:
+    """
+    x_axis = np.linspace(0, image_size-1, image_size) - center[0]
+    y_axis = np.linspace(0, image_size-1, image_size) - center[1]
+    xx, yy = np.meshgrid(x_axis, y_axis)
+    kernel = np.exp(-0.5 * (np.square(xx) + np.square(yy)) / np.square(sig))
+
+    return np.asfarray(kernel, float)
+
+def evaluation_pckh(predicted_heatmaps, coords):
+    PCKh = np.zeros((coords.shape[0] * coords.shape[1]))
+    head_len = np.zeros(coords.shape[0])
+    predicted_joints = local_maxima(predicted_heatmaps)
+    # print("predicted_joints", predicted_joints)
+
+    for i in range(coords.shape[0]):
+        if coords[i, 7, 0] == -1 or coords[i, 7, 1] == -1 or coords[i, 8, 0] == -1 or coords[i, 8, 1] == -1:
+            print("There is an issue with head not recognised in dataset")
+            continue
+
+        head_len[i] = np.linalg.norm(coords[i, 7] - coords[i, 8])
+
+        for j in range(coords.shape[1]):
+            if all(coords[i,j] == [-1, -1]):
+                continue
+
+            dist = np.linalg.norm(predicted_joints[i][j] - coords[i][j])
+            if dist <= head_len[i] * 0.5:
+                PCKh[i] = 1
+
+    PCKh = np.mean(PCKh)
+
+    return PCKh * 100
+
+def local_maxima(heatmap):
+    joint_coord = []
+
+    for i in range(heatmap.shape[0]):
+        arr = []
+        for j in range(heatmap.shape[1]):
+            arr.append(np.where(heatmap[i][j] == np.amax(heatmap[i][j]))[0])
+
+        joint_coord.append(arr)
+        
+    return np.array(joint_coord)
+
+    
+
+
+

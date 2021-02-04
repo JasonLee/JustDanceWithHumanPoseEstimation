@@ -25,7 +25,7 @@ class ResNet(nn.Module):
 
     # first block, last block from resnet
     def forward(self, x):
-            return self.resnet101a(x), self.resnet101b(x)
+        return self.resnet101a(x), self.resnet101b(x)
 
 if __name__ == "__main__":
     model = ResNet()

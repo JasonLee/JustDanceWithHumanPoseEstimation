@@ -7,12 +7,13 @@ class _AtrousModule(nn.Module):
         super(_AtrousModule, self).__init__()
 
         self.atrous_conv = nn.Conv2d(in_channels=in_channels, out_channels=256, kernel_size=3, stride=1, padding=padding, dilation=dilation)
-        # TODO: Research why batch Norms are used
+        self.bn = nn.BatchNorm2d(256)
         self.relu = nn.ReLU()
 
 
     def forward(self, x):
         x = self.atrous_conv(x)
+        x = self.bn(x)
         return self.relu(x)
 
 
@@ -31,8 +32,10 @@ class WASP(nn.Module):
         # TODO: This might share weights which is bad
         self.conv1and1 = nn.Sequential(
             nn.Conv2d(in_channels=256, out_channels=256, kernel_size=1, stride=1),
+            nn.BatchNorm2d(256),
             nn.ReLU(),
             nn.Conv2d(in_channels=256, out_channels=256, kernel_size=1, stride=1),
+            nn.BatchNorm2d(256),
             nn.ReLU()
         )
 
@@ -41,7 +44,7 @@ class WASP(nn.Module):
         
         # Paper is misleading? Just says average pooling
         self.global_avg_pool = nn.Sequential(nn.AdaptiveAvgPool2d((1, 1)),
-                                             nn.Conv2d(in_channels=2048, out_channels=256, kernel_size=1, stride=1),
+                                             nn.Conv2d(in_channels=2048, out_channels=256, kernel_size=1, stride=1, bias=False),
                                              nn.BatchNorm2d(256),
                                              nn.ReLU())
 
