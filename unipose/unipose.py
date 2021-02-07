@@ -8,7 +8,6 @@ from wasp import WASP
 
 
 class UniPose(nn.Module):
-
     def __init__(self, num_heatmap=16):
         super(UniPose, self).__init__()
         self.wasp = WASP()

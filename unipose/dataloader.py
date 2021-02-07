@@ -40,7 +40,9 @@ class MPIIDataset(Dataset):
 
                     # 16 Joints
                     # Joints recognized
-                    if len(sorted(joints, key=lambda k: k['id'])) == 0:
+                    joint = sorted(joints, key=lambda k: k['id'])
+                    
+                    if len(joint) <= 8:
                         continue
                     
                     # sort based on joint id
@@ -83,10 +85,7 @@ class MPIIDataset(Dataset):
         """ Returns length of the dataset """
         return len(self.annotated_images)
 
-def getTrainingValidationDataLoader(split=0.7, batch_size=4, shuffle=True, num_workers=2, drop_last=True):
-    image_path = "D:\Downloads - SSD\mpii_human_pose_v1\images"
-    anno_path = "D:\Downloads - SSD\mpii_human_pose_v1_u12_2\mpii_human_pose_v1_u12_1.mat"
-
+def getTrainingValidationDataLoader(image_path, anno_path, split=0.7, batch_size=4, shuffle=True, num_workers=2, drop_last=True):
     fulldata = MPIIDataset(image_path, anno_path)
     split_len = int(len(fulldata) * split)
 

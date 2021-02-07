@@ -11,6 +11,7 @@ class Decoder(nn.Module):
 
         self.conv1 = nn.Sequential(
             nn.Conv2d(in_channels=256, out_channels=48, kernel_size=1, stride=1),
+            nn.BatchNorm2d(48),
             nn.ReLU()
         )
             
@@ -18,10 +19,13 @@ class Decoder(nn.Module):
 
         self.conv2 = nn.Sequential(
             nn.Conv2d(in_channels=304, out_channels=256, kernel_size=3, stride=1),
+            nn.BatchNorm2d(256),
             nn.ReLU(),
-            nn.Dropout(),
+            nn.Dropout(0.5),
             nn.Conv2d(in_channels=256, out_channels=256, kernel_size=3, stride=1),
-            nn.Dropout(),
+            nn.BatchNorm2d(256),
+            nn.ReLU(),
+            nn.Dropout(0.1),
             nn.Conv2d(in_channels=256, out_channels=num_heatmaps, kernel_size=1, stride=1) 
         )
         

@@ -71,8 +71,10 @@ def evaluation_pckh(predicted_heatmaps, coords):
     PCKh = np.zeros((coords.shape[0] * coords.shape[1]))
     head_len = np.zeros(coords.shape[0])
     predicted_joints = local_maxima(predicted_heatmaps)
-    # print("predicted_joints", predicted_joints)
 
+    # print("predicted_joints", predicted_joints)
+    # print("coords", coords)
+    # Batch Size
     for i in range(coords.shape[0]):
         if coords[i, 7, 0] == -1 or coords[i, 7, 1] == -1 or coords[i, 8, 0] == -1 or coords[i, 8, 1] == -1:
             print("There is an issue with head not recognised in dataset")
@@ -81,12 +83,13 @@ def evaluation_pckh(predicted_heatmaps, coords):
         head_len[i] = np.linalg.norm(coords[i, 7] - coords[i, 8])
 
         for j in range(coords.shape[1]):
-            if all(coords[i,j] == [-1, -1]):
-                continue
+            for k in range(1):
+                if all(coords[i, j, k] == [-1, -1]):
+                    continue
 
-            dist = np.linalg.norm(predicted_joints[i][j] - coords[i][j])
-            if dist <= head_len[i] * 0.5:
-                PCKh[i] = 1
+                dist = np.linalg.norm(predicted_joints[i, j, k] - coords[i, j, k])
+                if dist <= head_len[i] * 0.5:
+                    PCKh[i] = 1
 
     PCKh = np.mean(PCKh)
 
@@ -98,11 +101,12 @@ def local_maxima(heatmap):
     for i in range(heatmap.shape[0]):
         arr = []
         for j in range(heatmap.shape[1]):
-            arr.append(np.where(heatmap[i][j] == np.amax(heatmap[i][j]))[0])
+            arr.append(np.where(heatmap[i][j] == np.amax(heatmap[i][j])))
 
         joint_coord.append(arr)
         
     return np.array(joint_coord)
+        
 
     
 

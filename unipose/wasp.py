@@ -40,6 +40,7 @@ class WASP(nn.Module):
         )
 
         self.conv1 = nn.Conv2d(in_channels=1280, out_channels=256, kernel_size=1, bias=False)
+        self.bn1 = nn.BatchNorm2d(256)
         self.relu = nn.ReLU()
         
         # Paper is misleading? Just says average pooling
@@ -70,6 +71,7 @@ class WASP(nn.Module):
 
         
         x = self.conv1(x)
+        x = self.bn1(x)
         x = self.relu(x)
         return x
 
