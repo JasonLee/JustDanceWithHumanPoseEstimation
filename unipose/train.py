@@ -42,23 +42,35 @@ class Trainer():
         tbar = tqdm(self.training_dataloader)
         self.model.train()
         train_loss = 0.0
+        mPCKH = 0
 
 
         for i, (image, heatmaps, coords) in enumerate(tbar):
+
             image = image.cuda()
             heatmaps = heatmaps.cuda()
             self.optimizer.zero_grad() 
 
             out_heatmaps = self.model(image)
 
+            # if i == 5:
+            #     import matplotlib.pyplot as plt
+            #     plt.imshow(heatmaps[0,0].detach().cpu().numpy(), cmap='hot', interpolation='nearest')
+            #     plt.imshow(out_heatmaps[0,0].detach().cpu().numpy(), cmap='hot', interpolation='nearest')
+            #     plt.show()
+            #     break
+
             loss = self.criterion(out_heatmaps, heatmaps)
 
             train_loss += loss.item()
             
+            PCKH, mDist = evaluation_pckh(out_heatmaps.detach().cpu().numpy(), coords.numpy())
+            mPCKH += PCKH
+            
             loss.backward()
             self.optimizer.step()
 
-            tbar.set_description('Train loss: %.6f' % (train_loss / ((i + 1) * self.BATCH_SIZE)))
+            tbar.set_description('Train loss: %.6f, mPCKh: %.6f, mDist: %.6f' % (train_loss / (self.BATCH_SIZE * (i + 1)), (mPCKH / (self.BATCH_SIZE * (i + 1))), mDist))
 
         self.training_loss_data.append(train_loss / len(self.training_dataloader))
         
@@ -68,9 +80,10 @@ class Trainer():
         self.model.eval()
         val_loss = 0.0
         mPCKH = 0
+        avg_loss = 0
+        avg_PCKh = 0
 
         for i, (image, heatmaps, coords) in enumerate(tbar):
-
             image = image.cuda()
             heatmaps = heatmaps.cuda()
             self.optimizer.zero_grad()
@@ -80,10 +93,10 @@ class Trainer():
 
             val_loss += loss.item()
 
-            PCKH = evaluation_pckh(out_heatmaps.detach().cpu().numpy(), coords.numpy())
+            PCKH, mDist = evaluation_pckh(out_heatmaps.detach().cpu().numpy(), coords.numpy())
             mPCKH += PCKH
 
-            tbar.set_description('Validation loss: %.6f, mPCKh: %.6f' % (val_loss * self.BATCH_SIZE / (i + 1), (mPCKH * self.BATCH_SIZE / (i+1))))
+            tbar.set_description('Validation loss: %.6f, mPCKh: %.6f, mDist: %.6f' % (val_loss / (self.BATCH_SIZE * (i + 1)), (mPCKH / (self.BATCH_SIZE * (i + 1))), mDist))
         
         self.validation_loss_data.append(val_loss / len(self.validation_dataloader))
         self.mPCKh_data.append(mPCKH)

@@ -28,6 +28,8 @@ class Decoder(nn.Module):
             nn.Dropout(0.1),
             nn.Conv2d(in_channels=256, out_channels=num_heatmaps, kernel_size=1, stride=1) 
         )
+
+        self._init_weight()
         
     def forward(self, wasp_feat, lowlvl_feat, input_size):
         lowlvl_feat = self.conv1(lowlvl_feat)
@@ -42,3 +44,12 @@ class Decoder(nn.Module):
         x = F.interpolate(x, size=input_size, mode='bilinear', align_corners=True)
 
         return x
+
+    
+    def _init_weight(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                torch.nn.init.kaiming_normal_(m.weight)
+            elif isinstance(m, nn.BatchNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()

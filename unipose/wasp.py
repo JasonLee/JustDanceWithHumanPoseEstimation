@@ -10,11 +10,24 @@ class _AtrousModule(nn.Module):
         self.bn = nn.BatchNorm2d(256)
         self.relu = nn.ReLU()
 
+        self._init_weight()
+
 
     def forward(self, x):
         x = self.atrous_conv(x)
         x = self.bn(x)
         return self.relu(x)
+
+    def _init_weight(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                torch.nn.init.kaiming_normal_(m.weight)
+            elif isinstance(m, nn.BatchNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
+            elif isinstance(m, nn.BatchNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
 
 
 class WASP(nn.Module):
@@ -49,6 +62,8 @@ class WASP(nn.Module):
                                              nn.BatchNorm2d(256),
                                              nn.ReLU())
 
+        self._init_weight()
+
     def forward(self, x):
         x1 = self.atrous1(x)
         x2 = self.atrous2(x1)
@@ -69,11 +84,22 @@ class WASP(nn.Module):
 
         x = torch.cat((x1, x2, x3, x4, avg_pool), dim=1)
 
-        
         x = self.conv1(x)
         x = self.bn1(x)
         x = self.relu(x)
         return x
+
+    def _init_weight(self):
+        for m in self.modules():
+            if isinstance(m, nn.Conv2d):
+                torch.nn.init.kaiming_normal_(m.weight)
+            elif isinstance(m, nn.BatchNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
+            elif isinstance(m, nn.BatchNorm2d):
+                m.weight.data.fill_(1)
+                m.bias.data.zero_()
+        
 
 if __name__ == "__main__":
     net = WASP()

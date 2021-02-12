@@ -1,5 +1,4 @@
 import unittest
-from dataloader import MPIIDataset
 from unipose import UniPose
 import torch
 

@@ -65,47 +65,51 @@ def gaussian_heatmap(center=(2, 2), image_size=256, sig=1):
     xx, yy = np.meshgrid(x_axis, y_axis)
     kernel = np.exp(-0.5 * (np.square(xx) + np.square(yy)) / np.square(sig))
 
-    return np.asfarray(kernel, float)
+    return np.around(np.asfarray(kernel, float), decimals=4)
 
 def evaluation_pckh(predicted_heatmaps, coords):
-    PCKh = np.zeros((coords.shape[0] * coords.shape[1]))
+    PCKh = np.zeros((coords.shape[0:2]))
     head_len = np.zeros(coords.shape[0])
-    predicted_joints = local_maxima(predicted_heatmaps)
+    all_predicted_joints = local_maxima(predicted_heatmaps)
+    total_dist = 0
+    real_joint_total = 0
 
-    # print("predicted_joints", predicted_joints)
-    # print("coords", coords)
-    # Batch Size
-    for i in range(coords.shape[0]):
-        if coords[i, 7, 0] == -1 or coords[i, 7, 1] == -1 or coords[i, 8, 0] == -1 or coords[i, 8, 1] == -1:
+    for batch_num in range(coords.shape[0]):
+        if all(coords[batch_num, 7] == [-1, -1]) or all(coords[batch_num, 8] == [-1, -1]):
             print("There is an issue with head not recognised in dataset")
             continue
 
-        head_len[i] = np.linalg.norm(coords[i, 7] - coords[i, 8])
+        head_len[batch_num] = np.linalg.norm(coords[batch_num, 7] - coords[batch_num, 8])
 
         for j in range(coords.shape[1]):
-            for k in range(1):
-                if all(coords[i, j, k] == [-1, -1]):
-                    continue
+            if all(coords[batch_num, j] == [-1, -1]):
+                continue
+            
+            real_joint_total += 1
+            dist = np.linalg.norm(all_predicted_joints[batch_num, j] - coords[batch_num,j])
+            # print("all_predicted_joints", all_predicted_joints[batch_num,j])
+            # print("coords", coords[batch_num,j])
+            total_dist += dist
 
-                dist = np.linalg.norm(predicted_joints[i, j, k] - coords[i, j, k])
-                if dist <= head_len[i] * 0.5:
-                    PCKh[i] = 1
+            if dist <= head_len[batch_num] * 0.5:
+                PCKh[batch_num, j] = 1
+        
 
-    PCKh = np.mean(PCKh)
+    PCKh = np.sum(PCKh) / real_joint_total
 
-    return PCKh * 100
+    return PCKh * 100,  total_dist / real_joint_total
 
 def local_maxima(heatmap):
-    joint_coord = []
+    if len(heatmap.shape) == 4:
+        joint_coord = np.zeros((heatmap.shape[0],heatmap.shape[1], 2), dtype=int)
 
-    for i in range(heatmap.shape[0]):
-        arr = []
-        for j in range(heatmap.shape[1]):
-            arr.append(np.where(heatmap[i][j] == np.amax(heatmap[i][j])))
-
-        joint_coord.append(arr)
+        for batch_num in range(heatmap.shape[0]):
+            for i in range(heatmap.shape[1]):
+                arr = np.unravel_index(heatmap[batch_num, i].argmax(), heatmap[batch_num, i].shape)
+                arr = np.flip(arr)
+                joint_coord[batch_num, i] = arr
         
-    return np.array(joint_coord)
+    return joint_coord
         
 
     

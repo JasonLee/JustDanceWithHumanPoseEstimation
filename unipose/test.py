@@ -14,10 +14,10 @@ class Tester():
         self.model = UniPose()
         self.model.cuda()
 
-        checkpoint = torch.load('models/model_0.pth')
+        checkpoint = torch.load('models/model_5.pth')
         self.model.load_state_dict(checkpoint['model_state_dict'])
 
-        img = Image.open('image.png')
+        img = Image.open('image2.jpg')
         img = img.convert('RGB')
         points = self.test(img)
         # points = [[10, 10]]
@@ -46,8 +46,10 @@ class Tester():
         draw = ImageDraw.Draw(image)
         size = 5
 
-        for row, col in points[0]:
-            draw.ellipse((row-size, col-size, row+size, col+size), fill = 'blue', outline ='blue')
+        for i,(col, row) in enumerate(points[0]):
+            draw.text((row, col), str(i), fill=(255, 0, 0, 128))
+            draw.text((col, row), str(i), fill=(0, 255, 0, 128))
+            # draw.ellipse((row-size, col-size, row+size, col+size), fill = 'blue', outline ='blue')
 
         image.save('test.png')
         
