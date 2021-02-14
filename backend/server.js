@@ -6,7 +6,6 @@ const app = express()
 const port = 8000
 const connectionString = "mongodb+srv://" + process.env.db_user + ":" + process.env.db_pass + "@cluster0.tjbly.mongodb.net/" + process.env.db_name + "?retryWrites=true&w=majority"
 
-console.log(connectionString)
 MongoClient.connect(connectionString, {
     useUnifiedTopology: true
 }, (err, client) => {
