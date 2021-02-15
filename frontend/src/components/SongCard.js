@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
 
-
-class Song extends Component {
+class SongCard extends Component {
     constructor(props) {
         super(props);
         this.name = props.data.name;
         this.artist = props.data.artist;
-
     }
 
     // What is actually displayed
@@ -23,4 +21,4 @@ class Song extends Component {
     }
 }
 
-export default Song;
+export default SongCard;

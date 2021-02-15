@@ -15,7 +15,7 @@ MongoClient.connect(connectionString, {
     const db = client.db(process.env.dbname)
     const songCollection = db.collection('songs')
     
-    app.get('/test', (req, res) => {
+    app.get('/songs', (req, res) => {
         songCollection.find().toArray()
         .then(results => {
             res.send(results);
