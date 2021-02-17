@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import Song from './Song';
+import Music from './Music';
 import OutsideAlerter from './OutsideAlerter';
 import SongCard from './SongCard';
 import { List, ListItem, Paper } from '@material-ui/core/';
@@ -43,6 +44,7 @@ class SongList extends Component {
                     {this.state.showPopup ? 
                         <OutsideAlerter removefunc={() => this.removePopup()}>
                             <SongCard key={this.state.popup_content._id}  data={this.state.popup_content}/>
+                            <Music key={"M"+this.state.popup_content._id}/>
                         </OutsideAlerter>
                     :   <Paper style={{overflow: 'auto'}} >
                             <List>
