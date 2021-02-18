@@ -4,7 +4,8 @@ import Song from './Song';
 import Music from './Music';
 import OutsideAlerter from './OutsideAlerter';
 import SongCard from './SongCard';
-import { List, ListItem, Paper } from '@material-ui/core/';
+
+import { List, ListItem, Paper, Grow } from '@material-ui/core/';
 
 class SongList extends Component {
     constructor(props) {
@@ -17,8 +18,8 @@ class SongList extends Component {
     }
 
     handleClick(song) {
-        this.setState({showPopup: true, popup_content: song})
-        console.log(song);
+        this.setState({showPopup: true, popup_content: song});
+        // console.log(song);
     }
 
     // Runs when component has been added
@@ -27,7 +28,9 @@ class SongList extends Component {
         .then(res => {
             let data = res.data;
             this.setState({songs: data});
-        })
+        }).catch((error) => {
+            console.log(error.toJSON());
+        });
     };
 
     removePopup() {
@@ -42,10 +45,14 @@ class SongList extends Component {
             <div>
                 <div>
                     {this.state.showPopup ? 
-                        <OutsideAlerter removefunc={() => this.removePopup()}>
-                            <SongCard key={this.state.popup_content._id}  data={this.state.popup_content}/>
-                            <Music key={"M"+this.state.popup_content._id}/>
-                        </OutsideAlerter>
+                        <Grow in={true}>
+                            <Paper>
+                                <OutsideAlerter removefunc={() => this.removePopup()}>
+                                    <SongCard key={this.state.popup_content._id}  data={this.state.popup_content}/>
+                                    <Music key={"M"+this.state.popup_content._id}/>
+                                </OutsideAlerter>
+                            </Paper>
+                        </Grow>
                     :   <Paper style={{overflow: 'auto'}} >
                             <List>
                                 {this.state.songs.map(song=> 
