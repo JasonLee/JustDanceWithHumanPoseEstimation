@@ -1,0 +1,10 @@
+language: node_js
+
+node_js:
+  - lts/*
+
+cache: npm
+
+script: 
+  - cd frontend && npm test
+  - cd ../backend && npm test
