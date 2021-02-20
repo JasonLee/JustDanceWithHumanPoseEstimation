@@ -6,5 +6,7 @@ node_js:
 cache: npm
 
 script: 
-  - cd frontend && npm test
-  - cd ../backend && npm test
+  - cd frontend
+  - npm test
+  - cd ../backend
+  - npm test
