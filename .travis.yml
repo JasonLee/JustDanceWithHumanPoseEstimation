@@ -5,8 +5,11 @@ node_js:
 
 cache: npm
 
+
 script: 
   - cd frontend
+  - npm install
   - npm test
   - cd ../backend
+  - npm install
   - npm test
