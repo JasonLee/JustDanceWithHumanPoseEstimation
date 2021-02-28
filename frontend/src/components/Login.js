@@ -2,30 +2,22 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 
-async function loginUser(credentials) {
-    axios.post("/login", {
-        username: credentials.username,
-        password: credentials.password
-    }).then(res => {
-        let token = res.data;
-        console.log(token);
-        return token
-    }).catch((error) => {
-        console.log(error);
-    });
-}
-
 export default function Login({ setToken }) {
     const [username, setUserName] = useState();
     const [password, setPassword] = useState();
 
     const handleSubmit = async e => {
         e.preventDefault();
-        const token = await loginUser({
-            username,
-            password
+
+        axios.post("/login", {
+            username: username,
+            password: password
+        }).then(res => {
+            const token = res.data;
+            setToken(token);
+        }).catch((error) => {
+            console.log(error);
         });
-        setToken(token);
     }
 
     return (
