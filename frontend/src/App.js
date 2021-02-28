@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import './App.css';
 import SongList from './components/SongList';
 import Login from './components/Login';
+import Register from './components/Register';
 
 function App() {
   const [token, setToken] = useState();
 
   if (!token) {
-    return <Login setToken={setToken} />
+    return <Register setToken={setToken} />
   }
 
   return (
