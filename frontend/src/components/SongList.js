@@ -51,7 +51,7 @@ class SongList extends Component {
                 let data = res.data;
                 this.setState({ songs: data });
             }).catch((error) => {
-                console.log(error.toJSON());
+                console.log(error);
             });
     };
 

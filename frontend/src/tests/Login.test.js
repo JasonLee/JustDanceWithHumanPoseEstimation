@@ -10,14 +10,14 @@ import Login from '../components/Login';
 // TODO: Write tests once integrated with everything
 describe('Login Test', () => {
     fit("should renders without crashing", () => {
-        shallow(<Login />);
+        shallow(<Login setToken={()=>{}}/>);
     });
 
     xit("correct username and password", () => {
         testGetToken = (token) =>  {
             expect(token).toBeDefined();
         }
-        const wrapper = shallow(<Login setToken={testGetToken}/>);
+        const wrapper = shallow(<Login setToken={()=>{}}/>);
 
         const input = wrapper.find({ type: "text" });
         input.simulate('change', { target: { value: 'user' } });
