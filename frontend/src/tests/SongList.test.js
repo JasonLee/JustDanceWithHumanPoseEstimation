@@ -18,7 +18,12 @@ const mockAdapter = new MockAdapter(axios);
 // Mocking Axios API request. Need to return promise to check state change.
 mockAdapter.onGet("/songs").reply(() => {
     return new Promise(function (resolve) {
-        resolve([200, [{ "_id": 1, "name": "song1" }, { "_id": 2, "name": "song2" }]]);
+        resolve([200, [
+            {"_id": 1, "name": "csong", "artist": "cartist"}, 
+            {"_id": 2, "name": "bsong", "artist": "bartist"}, 
+            {"_id": 3, "name": "asong", "artist": "aartist"}
+        ]]);
+        reject(new Error("Should never error"));
     });
 });
 
@@ -41,13 +46,14 @@ describe('SongList display and API Test', () => {
         await flushPromises();
         // Renders new children components
         wrapper.update();
-        expect(wrapper.find(Song)).toHaveLength(2);
+        expect(wrapper.find(Song)).toHaveLength(3);
 
     });
 
     it('should show song card when clicked', async () => {
         const wrapper = shallow(<SongList />);
-        await flushPromises()
+        await flushPromises();
+        wrapper.update();
         wrapper.find(ListItem).first().simulate('click');
 
         expect(wrapper.find(SongCard).exists()).toBe(true);
@@ -56,9 +62,10 @@ describe('SongList display and API Test', () => {
     });
 
     // Can't simulate mouse click outside component
-    it.skip('should show list when clicked off', () => {
+    it.skip('should show list when clicked off', async () => {
         const wrapper = mount(<SongList />);
-
+        await flushPromises();
+        wrapper.update();
         wrapper.find(ListItem).first().simulate('click');
 
         // Outside click
@@ -72,15 +79,14 @@ describe('SongList display and API Test', () => {
 });
 
 describe('SongList sort and filter test', () => {
-    const songList = [{"_id": 1, "name": "csong", "artist": "cartist"}, {"_id": 2, "name": "bsong", "artist": "bartist"}, {"_id": 3, "name": "asong", "artist": "aartist"}]
-
     it("should renders without crashing", () => {
         shallow(<SongList />);
     });
 
-    it("should filter songs when searching", () => {
+    it("should filter songs when searching", async () => {
         const wrapper = shallow(<SongList />);
-        wrapper.setState({songs: songList})
+        await flushPromises();
+        wrapper.update();
 
         const input = wrapper.find('input');
         input.simulate('change', { target: { value: 'csong' } });
@@ -88,9 +94,10 @@ describe('SongList sort and filter test', () => {
         expect(wrapper.find(Song)).toHaveLength(1);
     });
 
-    it("should return 0 when searching for non-existing song", () => {
+    it("should return 0 when searching for non-existing song", async () => {
         const wrapper = shallow(<SongList />);
-        wrapper.setState({songs: songList})
+        await flushPromises();
+        wrapper.update();
 
         const input = wrapper.find('input');
         input.simulate('change', { target: { value: 'dsong' } });
@@ -98,35 +105,33 @@ describe('SongList sort and filter test', () => {
         expect(wrapper.find(Song)).toHaveLength(0);
     });
 
-    it('should select filter by song name and sort properly', () => {
+    it('should select filter by song name and sort properly', async () => {
         const wrapper = shallow(<SongList />);
-        wrapper.setState({songs: songList})
+        await flushPromises();
+        wrapper.update();
         
         // Simulate selecting options
         const select = wrapper.find('select');
         select.simulate('change', { target: { value: 'name' } });
         
-        for (let i = 0; i < songList.length-1; i++) {
+        for (let i = 0; i < 2; i++) {
             expect(wrapper.find(Song).at(i).props().data.name < wrapper.find(Song).at(i+1).props().data.name).toBeTruthy();
         }
         
     });
 
-    it('should select filter by song artist and sort properly', () => {
+    it('should select filter by song artist and sort properly', async () => {
         const wrapper = shallow(<SongList />);
-        wrapper.setState({songs: songList})
+        await flushPromises();
+        wrapper.update();
         
         // Simulate selecting options
         const input = wrapper.find('select');
         input.simulate('change', { target: { value: 'artist' } });
         
-        for (let i = 0; i < songList.length-1; i++) {
+        for (let i = 0; i < 2; i++) {
             expect(wrapper.find(Song).at(i).props().data.artist < wrapper.find(Song).at(i+1).props().data.artist).toBeTruthy();
         }
-        
     });
-
-
-
 
 });

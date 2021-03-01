@@ -6,8 +6,7 @@ export default class Music extends Component {
         this.state = {
             play: false
         }
-
-        this.url = "file:///C:/Users/jlee1/Desktop/Projects/JustDanceWithHumanPoseEstimation/frontend/src/components/audio.mp3";
+        
         this.audio = new Audio("http://127.0.0.1:8000/audio2");
         this.audio.volume = 0.1;
         // console.log("Music");
