@@ -26,12 +26,12 @@ const userCollection = db.collection('users');
 
 passport.use(new BearerStrategy(
     function (token, done) {
-        jwt.verify(token, process.env.private_key, function(err, decoded) {
-            if (err) {  return done(err) }
+        jwt.verify(token, process.env.private_key, function (err, decoded) {
+            if (err) { return done(err) }
             if (decoded) {
                 console.log(decoded.username)
                 return done(null, decoded.username);
-            }else{
+            } else {
                 return done(null, false);
             }
         });
@@ -46,37 +46,38 @@ app.get('/', passport.authenticate('bearer', { session: false }),
 );
 
 function generateToken(username) {
-    const token = jwt.sign({username: username}, process.env.private_key);
+    const token = jwt.sign({ username: username }, process.env.private_key);
     return token
 }
 
 app.post('/register', (req, res) => {
     userCollection.findOne({ "username": req.body.username })
         .then(result => {
-            if (result){
+            if (result) {
                 res.status(409).send("Error: Unable to create acount");
-                console.log("Username already exists");
-                return; 
+                // console.log("Username already exists");
+                return;
+            } else {
+                // Not duplicate
+                bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
+                    if (hash) {
+                        // TODO: user db fields
+                        userCollection.insertOne({
+                            username: req.body.username,
+                            password: hash,
+                            email: req.body.email
+                        }).then((acknowledged, insertedId) => {
+                            if (acknowledged) {
+                                res.status(201).send("User has been created");
+                            }
+                        }).catch(err => console.log(err));
+                    }
+                });
             }
         }).catch(err => {
             res.status(409).send(err);
             return;
         });
-
-    bcrypt.hash(req.body.password, saltRounds, function (err, hash) {
-        if (hash) {
-            // TODO: user db fields
-            userCollection.insertOne({
-                username: req.body.username,
-                password: hash,
-                email: req.body.email
-            }).then((acknowledged, insertedId) => {
-                if (acknowledged) {
-                    res.status(201).send("User has been created");
-                }
-            }).catch(err => console.log(err));
-        }
-    });
 });
 
 app.post('/login', (req, res) => {
@@ -84,17 +85,17 @@ app.post('/login', (req, res) => {
         .then(result => {
             if (result) {
                 bcrypt.compare(req.body.password, result.password, (err, result) => {
-                    if (err) { console.log(err)}
+                    if (err) { console.log(err) }
                     if (result) {
                         const token = generateToken(req.body.username);
                         res.status(200).send({
                             token: token
                         });
-                    }else{
+                    } else {
                         res.sendStatus(401);
                     }
                 });
-            }else{
+            } else {
                 res.sendStatus(401);
             }
         }).catch(err => console.log(err));
