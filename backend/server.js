@@ -29,7 +29,6 @@ passport.use(new BearerStrategy(
         jwt.verify(token, process.env.private_key, function (err, decoded) {
             if (err) { return done(err) }
             if (decoded) {
-                console.log(decoded.username)
                 return done(null, decoded.username);
             } else {
                 return done(null, false);
@@ -41,7 +40,7 @@ passport.use(new BearerStrategy(
 // Test check user's bearer token
 app.get('/', passport.authenticate('bearer', { session: false }),
     function (req, res) {
-        res.status(200).send("access_token is OK");
+        res.status(200).send({"OK": "access_token is OK"});
     }
 );
 
@@ -101,6 +100,13 @@ app.post('/login', (req, res) => {
         }).catch(err => console.log(err));
 });
 
+app.get('/user_details', passport.authenticate('bearer', { session: false }), (req, res) => {
+    userCollection.findOne({ "username": req.user }, {projection:{ "displayName": 1, _id:0 }})
+        .then(result => {
+            res.status(200).send(result);
+        });
+
+});
 
 app.get('/songs', (req, res) => {
     songCollection.find().toArray()
