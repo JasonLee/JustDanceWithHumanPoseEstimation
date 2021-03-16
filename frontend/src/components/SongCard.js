@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import ImageService from '../services/ImageService';
+import PropTypes from 'prop-types';
 
 export default class SongCard extends Component {
     constructor(props) {
@@ -9,6 +11,8 @@ export default class SongCard extends Component {
         this.length = props.data.length;
         this.creator = props.data.creator;
         this.difficulty = props.data.difficulty;
+
+        this.goToSong = props.startfunc;
         
         this.image = ImageService.getImage("TWICE");
     }
@@ -25,9 +29,17 @@ export default class SongCard extends Component {
                 Creator: {this.creator}<br />
                 Difficulty: {this.difficulty}<br />
             </div>
-            <button onClick={() => console.log("Start Pressed")}> Start </button>
+            <Link to="/test">
+                <button> Start </button>
+            </Link>
+
             <button onClick={() => console.log("Practice Pressed")}> Practise </button>
         </div>
         );
     }
 }
+
+SongCard.propTypes = {
+    startfunc: PropTypes.func.isRequired
+};
+

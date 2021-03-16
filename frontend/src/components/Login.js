@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
+import { Redirect } from 'react-router-dom';
 
 export default function Login({ setToken }) {
     const [username, setUserName] = useState();
     const [password, setPassword] = useState();
+    const [redirect, setRedirect] = useState();
 
     const handleSubmit = async e => {
         e.preventDefault();
@@ -15,9 +17,14 @@ export default function Login({ setToken }) {
         }).then(res => {
             const token = res.data;
             setToken(token);
+            setRedirect(true);
         }).catch((error) => {
             console.log(error);
         });
+    }
+
+    if (redirect) {
+        return <Redirect to='/songs'/>;
     }
 
     return (

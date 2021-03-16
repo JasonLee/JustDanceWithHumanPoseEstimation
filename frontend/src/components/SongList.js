@@ -17,7 +17,6 @@ class SongList extends Component {
             search: "",
             drop: "name"
         };
-
         this.handleSearchChange = this.handleSearchChange.bind(this);
         this.handleDropChange = this.handleDropChange.bind(this);
     }
@@ -60,6 +59,10 @@ class SongList extends Component {
         this.setState({ showPopup: false, popup_content: "" })
     }
 
+    goToSong(id) {
+        console.log("ROUTE TO SONG", id)
+    }
+
     // What is actually displayed
     // Note: using index as ID can be bad when reordering
     // Note: key changes result in component remount
@@ -71,7 +74,7 @@ class SongList extends Component {
                         <Grow in={true}>
                             <Paper>
                                 <OutsideAlerter removefunc={() => this.removePopup()}>
-                                    <SongCard key={this.state.popup_content._id} data={this.state.popup_content} />
+                                    <SongCard key={this.state.popup_content._id} data={this.state.popup_content} startfunc={this.goToSong} />
                                     <Music key={"M" + this.state.popup_content._id} />
                                 </OutsideAlerter>
                             </Paper>

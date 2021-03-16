@@ -102,6 +102,22 @@ app.post('/login', (req, res) => {
 });
 
 
+app.post('/pose_score', (req, res) => {
+    let base64Data = req.body.image.replace(/^data:image\/webp;base64,/, "");
+
+    // Webcam image to process
+    require("fs").writeFile("out.png", base64Data, 'base64', function(err) {
+        res.sendStatus(200);
+    });
+});
+
+app.get('/songs/:id', (req, res) => {
+    let id = req.params.id;
+    ms.pipe(req, res, "./dance_cover.mp4");
+
+});
+
+
 app.get('/songs', (req, res) => {
     songCollection.find().toArray()
         .then(results => {
