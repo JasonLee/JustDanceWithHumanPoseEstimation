@@ -49,7 +49,7 @@ class SongList extends Component {
             .then(res => {
                 let data = res.data;
                 this.setState({ songs: data });
-            }).catch((error) => {
+            }).catch(error => {
                 console.log(error);
             });
     };

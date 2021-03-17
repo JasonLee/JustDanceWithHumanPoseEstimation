@@ -18,7 +18,7 @@ export default function Login({ setToken }) {
             const token = res.data;
             setToken(token);
             setRedirect(true);
-        }).catch((error) => {
+        }).catch(error => {
             console.log(error);
         });
     }

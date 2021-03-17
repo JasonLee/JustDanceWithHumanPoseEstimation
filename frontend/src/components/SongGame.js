@@ -22,21 +22,34 @@ export default class SongGame extends Component {
     capture = () => {
         const imageSrc = this.webcamRef.current.getScreenshot();
 
+        if (imageSrc) {
+            console.log("SCREENSHOT");
+        }else{
+            console.log("fucked");
+        }   
+        
         axios.post("/pose_score", {
             image: imageSrc,
         })
-        .then(function (response) {
+        .then(response => {
             //handle success
             console.log(response);
         })
-        .catch(function (response) {
-            //handle error
-            console.log(response);
+        .catch(error => {
+            console.log(error);
         });
+        
     };
 
     playVideo = () => {
-        this.videoRef.current.playing = !this.videoRef.playing;
+        // this.videoRef.current.play();
+    }
+
+    playing = ({ playedSeconds }) => {
+        console.log("playedSeconds",Math.round(playedSeconds));
+        if (Math.round(playedSeconds) % 1 == 0) {
+            this.capture();
+        }
     }
 
     componentDidMount() {
@@ -44,7 +57,7 @@ export default class SongGame extends Component {
         //     .then(res => {
         //         let data = res.data;
         //         this.setState({ songs: data });
-        //     }).catch((error) => {
+        //     }).catch(error => {
         //         console.log(error);
         //     });
     };
@@ -59,7 +72,7 @@ export default class SongGame extends Component {
                     
                 </div>
                 <div>
-                    <ReactPlayer controls={true} ref={this.videoRef} url='http://localhost:8000/songs/1' />
+                    <ReactPlayer playing={true} onProgress={this.playing} ref={this.videoRef} url='http://localhost:8000/songs/1' />
                     <button onClick={this.playVideo}>Play/Pause</button>
                 </div>
             </>

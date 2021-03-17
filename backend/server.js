@@ -1,10 +1,13 @@
 const mongoose = require('mongoose');
 const express = require('express');
+const queue = require('express-queue');
 const passport = require('passport');
 const BearerStrategy = require('passport-http-bearer').Strategy;
 const ms = require('mediaserver');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const axios = require('axios');
+
 
 require('dotenv').config();
 
@@ -103,12 +106,38 @@ app.post('/login', (req, res) => {
 
 
 app.post('/pose_score', (req, res) => {
-    let base64Data = req.body.image.replace(/^data:image\/webp;base64,/, "");
+    console.log("SENDING IMAGE TO BACKEND");
 
-    // Webcam image to process
-    require("fs").writeFile("out.png", base64Data, 'base64', function(err) {
-        res.sendStatus(200);
-    });
+    if (req.body.image) {
+        console.log("Image");
+    }else{
+        console.log("fucked");
+    }   
+
+    let base64Data = req.body.image.replace(/^data:image\/webp;base64,/, "");
+    
+    axios.post("http://localhost:5000/pose", {
+            image: base64Data
+        },
+        {
+            headers: {
+            'Content-Type': 'application/json',
+            }
+        }).then(response => {
+            let data = response.data;
+            console.log(data);
+
+            res.sendStatus(200);
+        }).catch(error => {
+            console.log(error);
+            res.sendStatus(500);
+
+        });
+
+    // // Webcam image to process
+    // require("fs").writeFile("out.png", base64Data, 'base64', function(err) {
+    //     res.sendStatus(200);
+    // });
 });
 
 app.get('/songs/:id', (req, res) => {
