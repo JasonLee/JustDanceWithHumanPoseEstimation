@@ -14,6 +14,8 @@ class Trainer():
     training_loss_data = []
     validation_loss_data = []
     mPCKh_data = []
+    
+    numClasses  = 16
 
     def __init__(self):
         image_path = "D:\Downloads - SSD\mpii_human_pose_v1\images"
@@ -53,13 +55,6 @@ class Trainer():
 
             out_heatmaps = self.model(image)
 
-            # if i == 5:
-            #     import matplotlib.pyplot as plt
-            #     plt.imshow(heatmaps[0,0].detach().cpu().numpy(), cmap='hot', interpolation='nearest')
-            #     plt.imshow(out_heatmaps[0,0].detach().cpu().numpy(), cmap='hot', interpolation='nearest')
-            #     plt.show()
-            #     break
-
             loss = self.criterion(out_heatmaps, heatmaps)
 
             train_loss += loss.item()
@@ -78,10 +73,11 @@ class Trainer():
     def validate(self):
         tbar = tqdm(self.validation_dataloader)
         self.model.eval()
-        val_loss = 0.0
-        mPCKH = 0
-        avg_loss = 0
-        avg_PCKh = 0
+        
+        AP    = np.zeros(self.numClasses+1)
+        PCK   = np.zeros(self.numClasses+1)
+        PCKh  = np.zeros(self.numClasses+1)
+        count = np.zeros(self.numClasses+1)
 
         for i, (image, heatmaps, coords) in enumerate(tbar):
             image = image.cuda()

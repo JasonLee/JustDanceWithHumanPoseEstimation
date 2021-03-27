@@ -14,8 +14,7 @@ class Decoder(nn.Module):
             nn.BatchNorm2d(48),
             nn.ReLU()
         )
-            
-        self.maxpool = nn.MaxPool2d(kernel_size=2, stride=2)
+        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2)
 
         self.conv2 = nn.Sequential(
             nn.Conv2d(in_channels=304, out_channels=256, kernel_size=3, stride=1),
@@ -31,17 +30,15 @@ class Decoder(nn.Module):
 
         self._init_weight()
         
-    def forward(self, wasp_feat, lowlvl_feat, input_size):
+    def forward(self, wasp_feat, lowlvl_feat):
         lowlvl_feat = self.conv1(lowlvl_feat)
         lowlvl_feat = self.maxpool(lowlvl_feat)
 
         # Keep same size
         w = F.interpolate(wasp_feat, size=lowlvl_feat.shape[2:], mode='bilinear', align_corners=True)
-        x = torch.cat((lowlvl_feat, w), dim=1)
+        x = torch.cat((w, lowlvl_feat), dim=1)
 
         x = self.conv2(x)
-
-        x = F.interpolate(x, size=input_size, mode='bilinear', align_corners=True)
 
         return x
 

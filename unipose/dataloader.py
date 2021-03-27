@@ -26,7 +26,10 @@ class MPIIDataset(Dataset):
         self.joint_arr = []
         self.root = image_path
         self.transform = transforms.Compose([transforms.Resize((self.IMAGE_SIZE, self.IMAGE_SIZE), PIL.Image.BICUBIC),
-                                            transforms.ToTensor()])    
+                                            transforms.ToTensor(),
+                                            transforms.Normalize(mean=[128.0, 128.0, 128.0],
+                                                                 std=[256.0, 256.0, 256.0])
+                                            ])    
 
         for i in range(len(annolist)):
             anno_list_i = annolist[i]
