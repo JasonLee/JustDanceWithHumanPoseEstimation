@@ -5,6 +5,10 @@ import io
 from PIL import Image
 from flask import Flask, request
 from flask_cors import CORS, cross_origin
+from .OpenPose import OpenPose
+from .utils import crop_resize_image
+import cv2
+import pandas as pd
 
 def create_app(test_config=None):
     # create and configure the app
@@ -15,6 +19,8 @@ def create_app(test_config=None):
         SECRET_KEY='dev',
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
+
+    op = OpenPose()
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
@@ -38,21 +44,29 @@ def create_app(test_config=None):
     @app.route('/pose', methods = ['POST'])
     @cross_origin(origin='*',headers=['Content-Type'])
     def pose():
-        import sys
+        timestamp = request.json['timestamp']
+        print("timestamp", timestamp)
         print("SAVING IMAGE")
         base64_image = request.json['image']
         base64_decoded  = base64.b64decode(base64_image)
         image = Image.open(io.BytesIO(base64_decoded))
-        image_np = np.array(image)
+        cv2_image = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
 
-        im = Image.fromarray(image_np)
-        im.save("image.jpg")
+        data = op.process_image_keypoints(cv2_image)
+        data = data[0, :15]
+        data = crop_resize_image(data)
+
+        data = data.tolist()
+  
+        connection = op.get_joint_mapping()
+        imagecv = op.get_cv_image(cv2_image)
+        # cv2.imwrite("image.jpg", imagecv)
+
+        return {
+                "Status": "OK",
+                "points": data,
+                "mapping": connection
+                }
+
         
-        if isinstance(image_np, np.ndarray):
-            print("OK", file=sys.stderr)
-            return {"Status": "OK"}
-
-        print("NOT OK", file=sys.stderr)
-        return{"Status": "NOT OK"}
-
     return app

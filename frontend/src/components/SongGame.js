@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import Webcam from "react-webcam";
 import ReactPlayer from 'react-player'
 import axios from 'axios';
+import ScoreCanvas from './ScoreCanvas';
 
 const videoConstraints = {
     width: 1280,
@@ -10,10 +11,15 @@ const videoConstraints = {
 };
 
 export default class SongGame extends Component {
-   
     constructor(props) {
         super(props);
-
+        this.state = {
+            "joints": [],
+            "mapping": [],
+            "truth_joints": [],
+            "current_time": 0
+        };
+        
         this.webcamRef = React.createRef();
         this.videoRef = React.createRef();
         
@@ -24,16 +30,23 @@ export default class SongGame extends Component {
 
         if (imageSrc) {
             console.log("SCREENSHOT");
-        }else{
-            console.log("fucked");
-        }   
+        }
         
         axios.post("/pose_score", {
             image: imageSrc,
+            timestamp: this.state.current_time * 100,
+            songName: "test"
+
         })
         .then(response => {
             //handle success
-            console.log(response);
+            console.log("response", response.data)
+            this.setState({
+                            "joints": response.data.joints,
+                            "mapping": response.data.mapping,
+                            "truth_joints": response.data.truth_joints
+                          })
+
         })
         .catch(error => {
             console.log(error);
@@ -42,14 +55,21 @@ export default class SongGame extends Component {
     };
 
     playVideo = () => {
-        // this.videoRef.current.play();
+        this.videoRef.current.pause();
     }
 
-    playing = ({ playedSeconds }) => {
-        console.log("playedSeconds",Math.round(playedSeconds));
-        if (Math.round(playedSeconds) % 1 == 0) {
-            this.capture();
-        }
+    playing = ({ playedSeconds, loadedSeconds}) => {
+        // console.log("playedSeconds", playedSeconds, Math.round(playedSeconds));
+        this.setState({"current_time": playedSeconds})
+        // console.log("loadedSeconds", loadedSeconds, Math.round(loadedSeconds));
+
+        // if (Math.round(playedSeconds) % 1 == 0) {
+        //     this.capture();
+        // }
+    }
+
+    pause = () => {
+        this.capture()
     }
 
     componentDidMount() {
@@ -69,10 +89,12 @@ export default class SongGame extends Component {
                 <div>
                     <Webcam videoConstraints={videoConstraints} ref={this.webcamRef}/>
                     <button onClick={this.capture}>Capture photo</button>
+                    <ScoreCanvas key={this.state.joints} joints={this.state.joints} mapping={this.state.mapping}/>
+                    <ScoreCanvas key={this.state.truth_joints} joints={this.state.truth_joints} mapping={this.state.mapping}/>
                     
                 </div>
                 <div>
-                    <ReactPlayer playing={true} onProgress={this.playing} ref={this.videoRef} url='http://localhost:8000/songs/1' />
+                    <ReactPlayer controls={true} playing={true} muted={true} progressInterval="500" onProgress={this.playing} onPause={this.pause}ref={this.videoRef} url='http://localhost:8000/songs/1' />
                     <button onClick={this.playVideo}>Play/Pause</button>
                 </div>
             </>

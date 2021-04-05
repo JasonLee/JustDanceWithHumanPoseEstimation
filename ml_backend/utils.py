@@ -23,7 +23,7 @@ def L2_norm(arr):
     dist = np.sqrt(np.sum(np.square(arr)))
     arr = arr / dist
 
-    print(arr)
+    # print(arr)
     return arr
 
 def convert_to_vector(data):

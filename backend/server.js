@@ -7,14 +7,18 @@ const ms = require('mediaserver');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const axios = require('axios');
+const { response } = require('express');
+const pose = require('./PoseComparision.js');
+const math = require("mathjs")
 
 
 require('dotenv').config();
 
 const app = express();
-app.use(express.json());
+app.use(express.json({limit: '50mb'}));
 const port = 8000;
 const saltRounds = 10;
+const SCALE = 500;
 const connectionString = "mongodb+srv://" + process.env.db_user + ":" + process.env.db_pass + "@cluster0.tjbly.mongodb.net/" + process.env.db_name + "?retryWrites=true&w=majority";
 
 mongoose.connect(connectionString, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -105,35 +109,68 @@ app.post('/login', (req, res) => {
 });
 
 
-app.post('/pose_score', (req, res) => {
-    console.log("SENDING IMAGE TO BACKEND");
+const getPoseData = async (songName, timestamp) => {
+    const response = await songCollection.aggregate([
+        { $match: { "name": songName } },
+        { $project: { _id: 0, data: 1 } },
+        { $unwind: '$data' },
+        { $match: { "data.timestamp": {$gte: timestamp} } },
+        { $sort: { "timestamp": -1 } },
+        { $limit: 1 }
+    ], { "allowDiskUse" : true });
 
-    if (req.body.image) {
-        console.log("Image");
-    }else{
-        console.log("fucked");
-    }   
+    return response.toArray()
 
-    let base64Data = req.body.image.replace(/^data:image\/webp;base64,/, "");
-    
-    axios.post("http://localhost:5000/pose", {
-            image: base64Data
+}
+
+const processImageToPose = async (base64Data, song, timestamp) => {
+    const response = await axios.post("http://localhost:5000/pose", {
+            image: base64Data,
+            timestamp: timestamp
         },
         {
             headers: {
             'Content-Type': 'application/json',
             }
-        }).then(response => {
-            let data = response.data;
-            console.log(data);
-
-            res.sendStatus(200);
-        }).catch(error => {
-            console.log(error);
-            res.sendStatus(500);
-
         });
 
+    return response.data
+}
+
+app.post('/pose_score', async (req, res) => {
+    console.log("SENDING IMAGE TO BACKEND");
+    let timestamp = req.body.timestamp
+    let songName = req.body.songName
+
+    let base64Data = req.body.image.replace(/^data:image\/webp;base64,/, "");
+
+    // console.log(req.body.image)
+    console.log("songName", songName)
+    console.log("timestamp", timestamp)
+    const truthData = await getPoseData(songName, timestamp)
+    const userData = await processImageToPose(base64Data, songName, timestamp)
+
+    console.log("truthData", truthData)
+    console.log("userData", userData)
+
+    const user_joint_map = userData.points
+    const truth_joint_map = truthData[0].data.joint_map
+
+    results = pose.compare_poses(user_joint_map, truth_joint_map)
+
+    user_joints_scaled = math.dotMultiply(userData.points, SCALE)
+    truth_joints_scaled = math.dotMultiply(truth_joint_map, SCALE)
+
+    console.log("truth_joints_scaled", truth_joints_scaled)
+    console.log("user_joints_scaled", user_joints_scaled)
+
+    res.send({
+        "joints": user_joints_scaled,
+        "mapping": userData.mapping,
+        "truth_joints": truth_joints_scaled
+    })
+
+    // res.status(200).send(userData);
     // // Webcam image to process
     // require("fs").writeFile("out.png", base64Data, 'base64', function(err) {
     //     res.sendStatus(200);
@@ -142,7 +179,8 @@ app.post('/pose_score', (req, res) => {
 
 app.get('/songs/:id', (req, res) => {
     let id = req.params.id;
-    ms.pipe(req, res, "./dance_cover.mp4");
+    // ms.pipe(req, res, "./dance_cover.mp4");
+    ms.pipe(req, res, "../ml_backend/video.mp4");
 
 });
 
