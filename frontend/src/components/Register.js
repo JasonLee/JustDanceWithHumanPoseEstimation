@@ -21,7 +21,7 @@ export default function Register() {
             email: email
         }).then(res => {
             return res;
-        }).catch((error) => {
+        }).catch(error => {
             if (error.response.status == 409) {
                 setValidUser(false);
             }

@@ -1,9 +1,13 @@
 import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import ImageService from '../services/ImageService';
+import PropTypes from 'prop-types';
 
 export default class SongCard extends Component {
     constructor(props) {
         super(props);
+        this.songID = props.data._id;
+
         this.name = props.data.name;
         this.artist = props.data.artist;
         this.length = props.data.length;
@@ -25,7 +29,10 @@ export default class SongCard extends Component {
                 Creator: {this.creator}<br />
                 Difficulty: {this.difficulty}<br />
             </div>
-            <button onClick={() => console.log("Start Pressed")}> Start </button>
+            <Link to={"/game/"+this.songID}>
+                <button> Start </button>
+            </Link>
+
             <button onClick={() => console.log("Practice Pressed")}> Practise </button>
         </div>
         );

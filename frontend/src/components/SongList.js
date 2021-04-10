@@ -15,16 +15,14 @@ class SongList extends Component {
             showPopup: false,
             popup_content: "",
             search: "",
-            drop: "name"
+            drop: "name",
         };
-
         this.handleSearchChange = this.handleSearchChange.bind(this);
         this.handleDropChange = this.handleDropChange.bind(this);
     }
 
     handleClick(song) {
         this.setState({ showPopup: true, popup_content: song });
-        // console.log(song);
     }
 
     handleSearchChange(event) {
@@ -50,7 +48,7 @@ class SongList extends Component {
             .then(res => {
                 let data = res.data;
                 this.setState({ songs: data });
-            }).catch((error) => {
+            }).catch(error => {
                 console.log(error);
             });
     };
@@ -58,7 +56,7 @@ class SongList extends Component {
 
     removePopup() {
         this.setState({ showPopup: false, popup_content: "" })
-    }
+    }     
 
     // What is actually displayed
     // Note: using index as ID can be bad when reordering
@@ -71,7 +69,7 @@ class SongList extends Component {
                         <Grow in={true}>
                             <Paper>
                                 <OutsideAlerter removefunc={() => this.removePopup()}>
-                                    <SongCard key={this.state.popup_content._id} data={this.state.popup_content} />
+                                    <SongCard key={this.state.popup_content._id} data={this.state.popup_content}/>
                                     <Music key={"M" + this.state.popup_content._id} />
                                 </OutsideAlerter>
                             </Paper>
