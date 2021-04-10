@@ -5,11 +5,11 @@ import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 Enzyme.configure({ adapter: new Adapter() });
 
 import { shallow } from 'enzyme';
-import ProfileBox from '../components/ProfileBox';
+import SongGame from '../components/SongGame';
 
-describe('ProfileBox Test', () => {
+describe('SongGame Test', () => {
     it("should renders without crashing", () => {
-
-        shallow(<ProfileBox />);
+        shallow(<SongGame />);
     });
+
 });

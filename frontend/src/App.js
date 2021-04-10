@@ -5,6 +5,7 @@ import Login from './components/Login';
 import useToken from './hooks/useToken';
 import Register from './components/Register';
 import SongGame from './components/SongGame';
+import SongEndScore from './components/SongEndScore';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 
 function App() {
@@ -24,8 +25,11 @@ function App() {
 						<Route path="/register">
 							<Register />
 						</Route>
-						<Route path="/test">
+						<Route path="/game/:songID">
 							<SongGame />
+						</Route>
+						<Route path="/results/:gameID">
+							<SongEndScore />
 						</Route>
 						<Route path="/" render={() => {
 							return (

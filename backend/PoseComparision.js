@@ -37,13 +37,9 @@ function cosine_dist_test(a , b) {
     // console.log("b", b)
 
     for(let i = 1; i < KEYPOINT_NUM; i++) {
-        console.log("a"+i, a[i])
-        console.log("b"+i, b[i])
         a1 = subtract(a[i], a[COMPARISION_DICT[i]])
         b1 = subtract(b[i], b[COMPARISION_DICT[i]])
 
-        console.log("a1-"+i, a1)
-        console.log("b1-"+i, b1)
         res = 1.0 - sqrt(1.0 - cosine_sim(a1, b1))
         results.push(res)
     }

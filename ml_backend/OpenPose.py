@@ -6,7 +6,7 @@ import cv2
 import os
 # import DTW
 import numpy as np
-from .utils import limb_breakdown
+from .utils import limb_breakdown, crop_resize_image
 
 class OpenPose(PoseEstimation):
     def __init__(self):

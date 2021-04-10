@@ -27,8 +27,6 @@ def L2_norm(arr):
     return arr
 
 def convert_to_vector(data):
-    # Delete row of 0s 
-    # data = data[~np.all(data == 0, axis=1)]
     arr = np.delete(data, -1, 1)
     return arr.flatten()
 
