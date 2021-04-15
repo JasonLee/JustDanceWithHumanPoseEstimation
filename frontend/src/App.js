@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import './App.css';
+// import './App.css';
 import SongList from './components/SongList';
 import Login from './components/Login';
 import useToken from './hooks/useToken';
 import Register from './components/Register';
 import SongGame from './components/SongGame';
 import SongEndScore from './components/SongEndScore';
+import Multiplayer from './components/Multiplayer';
 import { BrowserRouter, Route, Switch, Redirect } from 'react-router-dom';
 
 function App() {
@@ -16,8 +17,8 @@ function App() {
 			<header className="App-header">
 				<BrowserRouter>
 					<Switch>
-						<Route path="/songs">
-							<SongList />
+						<Route path="/songs/:lobbyID?">
+							<SongList token={token}/>
 						</Route>
 						<Route path="/login">
 							<Login setToken={setToken} />
@@ -25,12 +26,16 @@ function App() {
 						<Route path="/register">
 							<Register />
 						</Route>
-						<Route path="/game/:songID">
+						<Route path="/game/:songID/:lobbyID?">
 							<SongGame />
 						</Route>
-						<Route path="/results/:gameID">
+						<Route path="/results/:gameID/:lobbyID?">
 							<SongEndScore />
 						</Route>
+						<Route path="/multiplayer/:lobbyID/:songID?">
+							<Multiplayer />
+						</Route>
+
 						<Route path="/" render={() => {
 							return (
 								token ?

@@ -4,6 +4,7 @@ import Webcam from "react-webcam";
 import ReactPlayer from 'react-player'
 import axios from 'axios';
 import ScoreCanvas from './ScoreCanvas';
+import MultiplayerScoreList from './MultiplayerScoreList';
 
 const videoConstraints = {
     width: 1280,
@@ -21,13 +22,16 @@ class SongGame extends Component {
             mapping: [],
             truth_joints: [],
             current_time: 0,
-            gameID: "",
             videoLoaded: false,
             webcamLoaded: false,
             playing:true,
-            score: 0
+            score: 0,
+            gameID: "1",
+            songID: props.match.params.songID,
+            lobbyID: props.match.params.lobbyID
         };
         
+        console.log("LOBBYID", this.state.lobbyID);
         this.webcamRef = React.createRef();
         this.videoRef = React.createRef();
         
@@ -87,8 +91,11 @@ class SongGame extends Component {
     }
 
     componentDidMount() {
-        axios.post("/create_game")
-            .then(res => {
+        axios.post("/create_game", {
+            playerID: this.state.playerID,
+            songID: this.state.songID,
+            lobbyID: this.state.lobbyID
+        }).then(res => {
                 let data = res.data.gameID;
                 this.setState({ gameID: data });
                 console.log("gameID", data);
@@ -104,6 +111,11 @@ class SongGame extends Component {
             <>
                 { (!this.state.webcamLoaded && !this.state.videoLoaded)? "Loading" : "Done" } <br/>
                 Score: {this.state.score}
+
+                <div> 
+                    {this.state.lobbyID && <MultiplayerScoreList  lobbyID={this.state.lobbyID}/>}
+                </div>
+
                 <div>
                     <Webcam onUserMedia={() => {this.setState({webcamLoaded: true})}} videoConstraints={videoConstraints} ref={this.webcamRef}/>
                     <button onClick={this.capture}>Capture photo</button>

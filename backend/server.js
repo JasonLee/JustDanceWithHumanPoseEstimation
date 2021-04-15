@@ -12,12 +12,21 @@ const pose = require('./PoseComparision.js');
 const math = require("mathjs")
 const { v4: uuidv4 } = require('uuid');
 
+const redis = require('redis');
+const http = require('http');
 
 require('dotenv').config();
 
 const app = express();
 app.use(express.json({limit: '50mb'}));
+
+const server = http.createServer(app);
+const socketIo = require("socket.io")(server);
+
 const port = 8000;
+
+const redis_url = "redis://127.0.0.1:6379"
+
 const saltRounds = 10;
 const SCALE = 1000;
 const connectionString = "mongodb+srv://" + process.env.db_user + ":" + process.env.db_pass + "@cluster0.tjbly.mongodb.net/" + process.env.db_name + "?retryWrites=true&w=majority";
@@ -32,6 +41,7 @@ db.once('open', function () {
 const songCollection = db.collection('songs');
 const userCollection = db.collection('users');
 const gameCollection = db.collection('games');
+const lobbyCollection = db.collection('lobbies');
 
 passport.use(new BearerStrategy(
     function (token, done) {
@@ -180,8 +190,8 @@ app.post('/pose_score', checkGameInPlay(), async (req, res) => {
     user_joints_scaled = math.dotMultiply(userData.points, SCALE)
     truth_joints_scaled = math.dotMultiply(truth_joint_map, SCALE)
 
-    console.log("truth_joints_scaled", truth_joints_scaled)
-    console.log("user_joints_scaled", user_joints_scaled)
+    // console.log("truth_joints_scaled", truth_joints_scaled)
+    // console.log("user_joints_scaled", user_joints_scaled)
     
     totalScore = results.reduce((a, b) => a + b, 0)
     res.send({
@@ -215,6 +225,7 @@ const increaseScore = (gameID, scoreInc) => {
 // Return gameID
 app.post('/create_game', (req, res) => {
     const songID = req.body.songID;
+    const lobbyID = req.body.lobbyID;
     const gameID = uuidv4();
     const newDate = new Date();
     const datetime = newDate.toISOString()
@@ -223,6 +234,7 @@ app.post('/create_game', (req, res) => {
     gameCollection.insertOne({
         songID: songID,
         gameID: gameID,
+        lobbyID: lobbyID,
         score: 0,
         accuracy: 0.00,
         active: true,
@@ -239,6 +251,23 @@ app.post('/create_game', (req, res) => {
             });
         }
     }).catch(err => console.log(err));
+});
+
+app.get('/getLobbyScores', (req, res) => {
+    lobbyID = req.query.lobbyID;
+
+    console.log(lobbyID)
+
+    gameCollection.find({
+        lobbyID: lobbyID
+    }, { fields:{
+            score:1, playerID:1, _id:0
+        }
+    }).toArray().then(results => {
+        console.log(results)
+        // FILTER RESULTS FOR JUST NAME AND SCORE
+        res.status(200).send(results);
+    }).catch(error => console.error(error));
 });
 
 app.post('/finish_game', (req, res) => {
@@ -260,13 +289,79 @@ app.get('/songs/:id', (req, res) => {
 
 });
 
-
 app.get('/songs', (req, res) => {
     songCollection.find().toArray()
         .then(results => {
             res.status(200).send(results);
         }).catch(error => console.error(error));
 })
+
+const {
+    userJoin,
+    getCurrentUser,
+    userLeave,
+    getRoomUsers
+  } = require('./socketUtils');
+const { reset } = require('nodemon');
+
+socketIo.on('connection', (socket) => {
+    socket.on('joinRoom', ( data ) => {
+        const user = userJoin(socket.id, data.username, data.lobbyID);
+    
+        socket.join(user.room);
+    
+        // Welcome current user
+        socket.emit('message', 'Welcome to the lobby');
+    
+        // Broadcast when a user connects
+        socket.broadcast.to(user.room).emit('message', `${user.username} has joined the lobby`);
+    
+        // Send users and room info
+        socketIo.to(user.room).emit('roomUsers', {
+          users: getRoomUsers(user.room)
+        });
+    });
+
+    // Listen for chatMessage
+    socket.on('chatMessage', msg => {
+        const user = getCurrentUser(socket.id);
+
+        socketIo.to(user.room).emit('message', user.username + ": " + msg);
+    });
+
+    socket.on('disconnect', () => {
+        const user = userLeave(socket.id);
+    
+        if (user) {
+            socketIo.to(user.room).emit(
+                'message', `${user.username} has left the chat`
+            );
+        
+            // Send users and room info
+            socketIo.to(user.room).emit('roomUsers', {
+                users: getRoomUsers(user.room)
+            });
+        }
+      });
+});
+
+app.post('/createLobby', (req, res) => {
+    const lobbyID = uuidv4();
+
+        // Note MONGODB has UUID support
+        lobbyCollection.insertOne({
+            lobbyID: lobbyID
+        }).then((acknowledged, insertedId) => {
+            // TODO: add expiry
+            if (acknowledged) {
+                res.status(201).send({
+                    "message": "Lobby has been created",
+                    "lobbyID": lobbyID
+                });
+            }
+        }).catch(err => console.log(err));
+})
+
 
 app.get('/audio', (req, res) => {
     ms.pipe(req, res, "../frontend/src/components/audio.mp3");
@@ -277,7 +372,7 @@ app.get('/audio2', (req, res) => {
 })
 
 if (process.env.NODE_ENV != "test") {
-    app.listen(port, () => {
+    server.listen(port, () => {
         console.log(`Server listening on port:${port}`);
     });
 }

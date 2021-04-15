@@ -5,6 +5,7 @@ import Music from './Music';
 import OutsideAlerter from './OutsideAlerter';
 import SongCard from './SongCard';
 
+import { withRouter } from 'react-router-dom'
 import { List, ListItem, Paper, Grow } from '@material-ui/core/';
 
 class SongList extends Component {
@@ -16,7 +17,13 @@ class SongList extends Component {
             popup_content: "",
             search: "",
             drop: "name",
+            token: props.token,
+            lobbyID: props.match.params.lobbyID
         };
+
+
+
+        this.props = props;
         this.handleSearchChange = this.handleSearchChange.bind(this);
         this.handleDropChange = this.handleDropChange.bind(this);
     }
@@ -53,6 +60,19 @@ class SongList extends Component {
             });
     };
 
+    goToMultiplayer = (e) => {
+        e.preventDefault();
+
+        axios.post("/createLobby")
+            .then(res => {
+                console.log(res.data.lobbyID);
+                // res.data.lobbyID;
+                this.props.history.push('/multiplayer/'+res.data.lobbyID);
+            }).catch(error => {
+                console.log(error);
+            });
+    }
+
 
     removePopup() {
         this.setState({ showPopup: false, popup_content: "" })
@@ -69,7 +89,7 @@ class SongList extends Component {
                         <Grow in={true}>
                             <Paper>
                                 <OutsideAlerter removefunc={() => this.removePopup()}>
-                                    <SongCard key={this.state.popup_content._id} data={this.state.popup_content}/>
+                                    <SongCard key={this.state.popup_content._id} data={this.state.popup_content} lobbyID={this.state.lobbyID} />
                                     <Music key={"M" + this.state.popup_content._id} />
                                 </OutsideAlerter>
                             </Paper>
@@ -101,10 +121,11 @@ class SongList extends Component {
                         </div>
                     }
                 </div>
+                {!this.state.lobbyID && <button onClick={this.goToMultiplayer}>Multiplayer</button>}
 
             </div>
         );
     }
 }
 
-export default SongList;
+export default withRouter(SongList);

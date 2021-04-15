@@ -186,3 +186,4 @@ openpose/models
 openpose/python
 openpose/x64
 openpose/examples
+node_modules

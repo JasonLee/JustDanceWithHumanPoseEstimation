@@ -15,6 +15,8 @@ export default class SongCard extends Component {
         this.difficulty = props.data.difficulty;
         
         this.image = ImageService.getImage("TWICE");
+
+        this.lobbyRedirect = props.lobbyID;
     }
 
     // What is actually displayed
@@ -29,10 +31,14 @@ export default class SongCard extends Component {
                 Creator: {this.creator}<br />
                 Difficulty: {this.difficulty}<br />
             </div>
-            <Link to={"/game/"+this.songID}>
+            {this.lobbyRedirect ? 
+            <Link to={"/multiplayer/" + this.lobbyRedirect + "/" + this.songID+"/"}>
+                <button> Select Song </button>
+            </Link>
+            :<Link to={"/game/"+this.songID}>
                 <button> Start </button>
             </Link>
-
+            }
             <button onClick={() => console.log("Practice Pressed")}> Practise </button>
         </div>
         );
