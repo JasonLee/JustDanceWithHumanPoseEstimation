@@ -4,11 +4,23 @@ import Song from './Song';
 import Music from './Music';
 import OutsideAlerter from './OutsideAlerter';
 import SongCard from './SongCard';
+import styles from './css/SongList.module.css';
+import ImageService from '../services/ImageService';
 
 import { withRouter } from 'react-router-dom'
 import { List, ListItem, Paper, Grow } from '@material-ui/core/';
 
 class SongList extends Component {
+    style = {
+        backgroundImage: "url(" + ImageService.getImage("TWICE") + ")",
+        filter: "blur(8px)",
+        WebkitFilter: "blur(8px)",
+        height: "100vh",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundSize: "cover"
+    }
+
     constructor(props) {
         super(props);
         this.state = {
@@ -67,7 +79,7 @@ class SongList extends Component {
             .then(res => {
                 console.log(res.data.lobbyID);
                 // res.data.lobbyID;
-                this.props.history.push('/multiplayer/'+res.data.lobbyID);
+                this.props.history.push('/multiplayer/' + res.data.lobbyID);
             }).catch(error => {
                 console.log(error);
             });
@@ -76,7 +88,9 @@ class SongList extends Component {
 
     removePopup() {
         this.setState({ showPopup: false, popup_content: "" })
-    }     
+    }
+
+
 
     // What is actually displayed
     // Note: using index as ID can be bad when reordering
@@ -86,20 +100,25 @@ class SongList extends Component {
             <div>
                 <div>
                     {this.state.showPopup ?
-                        <Grow in={true}>
-                            <Paper>
-                                <OutsideAlerter removefunc={() => this.removePopup()}>
-                                    <SongCard key={this.state.popup_content._id} data={this.state.popup_content} lobbyID={this.state.lobbyID} />
-                                    <Music key={"M" + this.state.popup_content._id} />
-                                </OutsideAlerter>
-                            </Paper>
-                        </Grow>
+                        <div>
+                            <div style={this.style}> </div>
+                            <div className={styles.SongCardParentContainer}>
+                                <Grow in={true}>
+                                    <Paper>
+                                        <OutsideAlerter removefunc={() => this.removePopup()}>
+                                            <SongCard key={this.state.popup_content._id} data={this.state.popup_content} lobbyID={this.state.lobbyID} />
+                                            <Music key={"M" + this.state.popup_content._id} />
+                                        </OutsideAlerter>
+                                    </Paper>
+                                </Grow>
+                            </div>
+                        </div>
                         :
                         <div>
-                            <div>
-                                <input type="text" value={this.state.search} onChange={this.handleSearchChange} />
+                            <div className={styles.SearchContainer}>
+                                <input className={styles.filter} type="text" value={this.state.search} onChange={this.handleSearchChange} />
                                 <label>
-                                    <select value={this.state.drop} onChange={this.handleDropChange}>
+                                    <select className={styles.dropdown}value={this.state.drop} onChange={this.handleDropChange}>
                                         <option value="name">Song Title</option>
                                         <option value="artist">Artist</option>
                                         <option value="difficulty">Difficulty</option>
@@ -107,21 +126,22 @@ class SongList extends Component {
                                     </select>
                                 </label>
                             </div>
-                            <Paper style={{ overflow: 'auto' }} >
-                                <List>
+                            <Paper className = {styles.PaperContainer}>
+                                <List className={styles.ListContainer}>
                                     {this.state.songs
                                         .filter(song => song.name.toLowerCase().includes(this.state.search) || song.artist.toLowerCase().includes(this.state.search))
                                         .sort((a, b) => this.customSort(a, b))
                                         .map(song =>
-                                            <ListItem key={song._id} onClick={() => this.handleClick(song)}> <Song data={song} /> </ListItem>
+                                            <ListItem className={styles.ListItem} key={song._id} onClick={() => this.handleClick(song)}> <Song data={song} /> </ListItem>
                                         )
                                     }
                                 </List>
                             </Paper>
+                            {!this.state.lobbyID && <button onClick={this.goToMultiplayer}>Multiplayer</button>}
                         </div>
                     }
                 </div>
-                {!this.state.lobbyID && <button onClick={this.goToMultiplayer}>Multiplayer</button>}
+               
 
             </div>
         );

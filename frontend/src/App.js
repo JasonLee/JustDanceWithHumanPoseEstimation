@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-// import './App.css';
+import styles from './App.module.css';
 import SongList from './components/SongList';
 import Login from './components/Login';
 import useToken from './hooks/useToken';
@@ -14,7 +14,7 @@ function App() {
 
 	return (
 		<div className="App">
-			<header className="App-header">
+			<header className={styles.AppHeader}>
 				<BrowserRouter>
 					<Switch>
 						<Route path="/songs/:lobbyID?">

@@ -23,8 +23,8 @@ export default class Music extends Component {
 
     play = () => {
         console.log("Play")
-        this.setState({ play: true, pause: false })
-        this.audio.play();
+        // this.setState({ play: true, pause: false })
+        // this.audio.play();
     }
 
     pause = () => {

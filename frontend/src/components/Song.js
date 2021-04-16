@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ImageService from '../services/ImageService';
+import styles from './css/Song.module.css';
 
 
 class Song extends Component {
@@ -14,9 +15,9 @@ class Song extends Component {
     // What is actually displayed
     render() {
         return ( 
-        <div>
+        <div className={styles.SongContainer}>
             <img src={this.image} />
-            <div>
+            <div className={styles.SongDetails}>
                 {this.name}<br />
                 {this.artist}
             </div>

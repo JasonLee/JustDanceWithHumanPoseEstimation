@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import styles from './css/Register.module.css';
 
 export default function Register() {
     const [validUser, setValidUser] = useState({value: false});
     const [username, setUserName] = useState();
-    const [password, setPassword] = useState({value: ""});
-    const [comfPassword, setComfPassword] = useState({value: ""});
+    const [password, setPassword] = useState();
+    const [comfPassword, setComfPassword] = useState();
     const [email, setEmail] = useState();
 
     const handleSubmit = async e => {
@@ -29,26 +30,27 @@ export default function Register() {
     }
 
     return (
-        <div className="login-wrapper">
-            <h1>Register for an Account</h1>
+        <div className={styles.RegisterWrapper}>
+            <h1 className={styles.Container}>Register for an Account</h1>
             <form onSubmit={handleSubmit}>
-                <label>
-                    <p>Username</p>
-                    <input type="text" onChange={e => setUserName(e.target.value)} />
-                    {validUser ? null : <text>Username already exists</text>}
-                </label>
-                <label>
-                    <p>Password</p>
-                    <input type="password" onChange={e => setPassword(e.target.value)} />
-                </label>
-                <label>
-                    <p>Confirm Password</p>
-                    <input type="password" onChange={e => setComfPassword(e.target.value)} />
-                    {password && comfPassword && password != comfPassword 
-                        ? <div>Password does not match</div> : null}
-                </label>
-                <div>
-                    <button type="submit">Submit</button>
+                <div className={styles.Container}>
+                    <label>
+                        <label><b>Username</b></label>
+                        <input className={styles.input} type="text" onChange={e => setUserName(e.target.value)} required="required"/>
+                        {validUser ? null : <text>Username already exists</text>}
+                    </label>
+                    <label>
+                        <label><b>Password</b></label>
+                        <input className={styles.input} type="password" onChange={e => setPassword(e.target.value)} required="required"/>
+                    </label>
+                    <label>
+                        <label><b>Confirm Password</b></label>
+                        <input className={styles.input} type="password" onChange={e => setComfPassword(e.target.value)} required="required"/>
+                        {password && comfPassword && password != comfPassword ? <div>Password does not match</div> : null}
+                    </label>
+                </div>
+                <div className={styles.Container}>
+                    <button className={styles.SubmitButton}type="submit">Submit</button>
                 </div>
             </form>
         </div>

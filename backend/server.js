@@ -255,9 +255,7 @@ app.post('/create_game', (req, res) => {
 
 app.get('/getLobbyScores', (req, res) => {
     lobbyID = req.query.lobbyID;
-
-    console.log(lobbyID)
-
+    
     gameCollection.find({
         lobbyID: lobbyID
     }, { fields:{
