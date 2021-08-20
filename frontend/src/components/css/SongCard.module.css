@@ -2,7 +2,7 @@
 .SongCardContainer {
     display: flex;
     flex-direction: row;
-
+    align-items: center;
     background-color: rgba(0,0,0, 0.9); /*Black w/opacity/see-through*/
     color: white;
     font-weight: bold;
@@ -14,7 +14,8 @@
     z-index: 2;
     width: 70%;
     padding: 20px;
-    text-align: center;
+
+
 }
 
 .image {
@@ -41,4 +42,13 @@
 .button:hover {
     background-color: #9da19d;
     color: white;
+}
+
+.textwrapper {
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 100%;
 }

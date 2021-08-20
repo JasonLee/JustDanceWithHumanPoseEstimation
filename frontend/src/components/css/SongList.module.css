@@ -1,12 +1,17 @@
 
 .ListContainer {
-    background-color: red;
-    width: 70%;
+    width: 50vw;
     max-width: 100%;
+    background-color: #282c34;
 }
 
 .ListItem {
     margin-bottom: 10px;
+    padding: 20px;
+    border-radius: 25px;
+    border-style: solid;
+    color: white;
+    background-color: #6f7788;
 }
 
 .PaperContainer {
@@ -14,7 +19,7 @@
     flex-wrap: wrap;
     text-align: center;
     justify-content: center;
-    background-color: green !important;
+    background-color: #131518;
 }
 
 .SearchContainer {
@@ -22,12 +27,12 @@
     flex-direction: row;
     justify-content: flex-end;
     font-size: calc(10px + 2vmin);
-    color: white;
+    color: black;
     margin-bottom: 10px;
 }
 
 .SongCardParentContainer {
-    display: inline-flex;
+    display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -35,12 +40,21 @@
     color: white;
 }
 
+.SongLead {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.LeaderBoardContainer {
+    width: 350px;
+}
+
 .filter {
     font-size: 16px;
-    border: 1px solid grey;
-    background: #f1f1f1;
     width: 100%;
     max-width:300px;
+    padding-left: 30px;
 }
 
 .dropdown {
@@ -50,6 +64,8 @@
     font-size: 14px;
     border: none;
     cursor: pointer;
+    width: 200px;
+    text-align: center;
 }
 
 .dropdown option {
@@ -60,4 +76,12 @@
 
 .dropdown option:hover {
     background-color: #f1f1f1
+}
+
+.multiplayer {
+    position: absolute;
+    max-width: 99vw;
+    width: 50%;
+    top: 20px;
+    text-align: center;
 }

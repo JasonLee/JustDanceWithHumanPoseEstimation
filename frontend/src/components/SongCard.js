@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import ImageService from '../services/ImageService';
-import PropTypes from 'prop-types';
 import styles from './css/SongCard.module.css'
+import Music from './Music';
 
-
-
+// Song Card displayed when a song is clicked in the main page
 export default class SongCard extends Component {
     constructor(props) {
         super(props);
@@ -17,7 +16,7 @@ export default class SongCard extends Component {
         this.creator = props.data.creator;
         this.difficulty = props.data.difficulty;
         
-        this.image = ImageService.getImage("TWICE");
+        this.image = ImageService.getImagebyID(this.songID);
 
         this.lobbyRedirect = props.lobbyID;
     }
@@ -27,7 +26,7 @@ export default class SongCard extends Component {
         return ( 
         <div className={styles.SongCardContainer} >
             <img className={styles.image} src={this.image} />
-            <div>
+            <div className={styles.textwrapper}>
                 <div>
                     Name: {this.name}<br />
                     Artist: {this.artist}<br />
@@ -43,7 +42,7 @@ export default class SongCard extends Component {
                     <button className={styles.button}> Start </button>
                 </Link>
                 }
-                <button className={styles.button} onClick={() => console.log("Practice Pressed")}> Practise </button>
+                <Music id={this.songID} />
             </div>
             
         </div>

@@ -6,15 +6,17 @@ img {
 }
 
 .SongDetails {
-    color: #111; 
+    color: white; 
     font-family: Verdana;
+    padding: 10px;
+    font-size: 25px;
 }
 
 .SongContainer {
     display: flex;
     flex-direction: row;
     align-items: center;
-    background-color: #EBEBEB;
+    color: #EBEBEB;
     width: 100%;
     max-width: 100%;
 }
