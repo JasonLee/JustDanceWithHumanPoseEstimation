@@ -1,0 +1,46 @@
+.LeaderBoardWrapper {
+    border-style: solid;
+    border-radius: 25px;
+    background-color: grey;
+    width: 100%;
+}
+
+.Paper {
+    max-height: 100vh;
+    height: 100%;
+    overflow: auto;
+}
+
+.Tabs {
+    border-radius: 25px;
+    color: white;
+    border-style: solid;
+    width: 100%;
+
+}
+
+.entry {
+    color: white;
+    border: white;
+    background-color: #131518;
+}
+
+.container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.number {
+    padding-right: 10px;
+    font-size: 30px;
+}
+
+.image{
+    width: 100px;
+    height: 100px;
+}
+
+.playerName{
+    padding: 10px;
+}

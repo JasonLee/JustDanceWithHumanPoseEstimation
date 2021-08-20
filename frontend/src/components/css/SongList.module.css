@@ -1,0 +1,87 @@
+
+.ListContainer {
+    width: 50vw;
+    max-width: 100%;
+    background-color: #282c34;
+}
+
+.ListItem {
+    margin-bottom: 10px;
+    padding: 20px;
+    border-radius: 25px;
+    border-style: solid;
+    color: white;
+    background-color: #6f7788;
+}
+
+.PaperContainer {
+    display: flex;
+    flex-wrap: wrap;
+    text-align: center;
+    justify-content: center;
+    background-color: #131518;
+}
+
+.SearchContainer {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    font-size: calc(10px + 2vmin);
+    color: black;
+    margin-bottom: 10px;
+}
+
+.SongCardParentContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
+}
+
+.SongLead {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.LeaderBoardContainer {
+    width: 350px;
+}
+
+.filter {
+    font-size: 16px;
+    width: 100%;
+    max-width:300px;
+    padding-left: 30px;
+}
+
+.dropdown {
+    background-color: #4c77af;
+    color: white;
+    padding: 12px;
+    font-size: 14px;
+    border: none;
+    cursor: pointer;
+    width: 200px;
+    text-align: center;
+}
+
+.dropdown option {
+    position: absolute;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown option:hover {
+    background-color: #f1f1f1
+}
+
+.multiplayer {
+    position: absolute;
+    max-width: 99vw;
+    width: 50%;
+    top: 20px;
+    text-align: center;
+}

@@ -40,7 +40,7 @@ cap.release()
 
 # print(joint_time[0])
 
-x = songs.insert_one({"name": "test", "artist":"test", "data": joint_time})
+x = songs.insert_one({"_id": 2, "name": "Dynamite", "artist":"BTS", "length": "0:50", "difficulty": "HARD", "data": joint_time})
 # print(x.inserted_id)
 
 

@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import ImageService from '../services/ImageService';
-import PropTypes from 'prop-types';
+import styles from './css/SongCard.module.css'
+import Music from './Music';
 
+// Song Card displayed when a song is clicked in the main page
 export default class SongCard extends Component {
     constructor(props) {
         super(props);
@@ -14,26 +16,35 @@ export default class SongCard extends Component {
         this.creator = props.data.creator;
         this.difficulty = props.data.difficulty;
         
-        this.image = ImageService.getImage("TWICE");
+        this.image = ImageService.getImagebyID(this.songID);
+
+        this.lobbyRedirect = props.lobbyID;
     }
 
     // What is actually displayed
     render() {
         return ( 
-        <div>
-            <img src={this.image} />
-            <div>
-                Name: {this.name}<br />
-                Artist: {this.artist}<br />
-                Length: {this.length}<br />
-                Creator: {this.creator}<br />
-                Difficulty: {this.difficulty}<br />
+        <div className={styles.SongCardContainer} >
+            <img className={styles.image} src={this.image} />
+            <div className={styles.textwrapper}>
+                <div>
+                    Name: {this.name}<br />
+                    Artist: {this.artist}<br />
+                    Length: {this.length}<br />
+                    Creator: {this.creator}<br />
+                    Difficulty: {this.difficulty}<br />
+                </div>
+                {this.lobbyRedirect ? 
+                <Link to={"/multiplayer/" + this.lobbyRedirect + "/" + this.songID+"/"}>
+                    <button> Select Song </button>
+                </Link>
+                :<Link to={"/game/"+this.songID}>
+                    <button className={styles.button}> Start </button>
+                </Link>
+                }
+                <Music id={this.songID} />
             </div>
-            <Link to={"/game/"+this.songID}>
-                <button> Start </button>
-            </Link>
-
-            <button onClick={() => console.log("Practice Pressed")}> Practise </button>
+            
         </div>
         );
     }

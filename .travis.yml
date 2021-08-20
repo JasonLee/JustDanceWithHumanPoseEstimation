@@ -9,6 +9,7 @@ script:
   - cd frontend
   - npm install
   - npm test
-  - cd ../backend
-  - npm install
-  - npm test
+  # Commented out due to MongoDB altas db cluster being disabled.
+  # - cd ../backend
+  # - npm install
+  # - npm test

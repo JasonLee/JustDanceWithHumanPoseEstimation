@@ -1,0 +1,63 @@
+.Container {
+    /* background: #e7e7e7; */
+    display: flex;
+    justify-content: center;
+    width: 98%;  
+    height: 98%;
+    padding: 10px;
+}
+
+.WebcamWrapper {
+    max-width: 50vw;
+    align-self: center
+}
+
+.Webcam {
+    width: 100%;
+}
+
+.VideoWrapper {
+    background-color: red;
+}
+
+.VideoPlayer {
+    
+}
+
+.ScoreWrapper {
+    border-style: solid;
+    border-radius: 5px;
+    position: absolute;
+    top: 35vh;
+    left: 0;
+}
+
+.PlayerJoints {
+    border-style: solid;
+    background-color: white;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+.TruthJoints {
+    border-style: solid;
+    background-color: white;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    
+}
+
+.progressWrapper {
+    color:#000 !important;
+    background-color:#f1f1f1 !important;
+    font-size:36px !important;
+    border-radius: 16px;
+}
+
+.progress {
+    padding:0.01em 16px;
+    color:#fff !important;
+    background-color:#2196F3 !important;
+}

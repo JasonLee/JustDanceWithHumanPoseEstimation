@@ -1,26 +1,58 @@
 import React from 'react';
 
-import Enzyme from 'enzyme';
+import Enzyme, { shallow }  from 'enzyme';
+import Login from '../components/Login';
+
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
+import { Router } from 'react-router-dom';
+import { createMemoryHistory } from 'history';
+
 import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
 Enzyme.configure({ adapter: new Adapter() });
 
-import { shallow } from 'enzyme';
-import Login from '../components/Login';
+const mockAdapter = new MockAdapter(axios);
+// Mocking Axios API request. Need to return promise to check state change.
+mockAdapter.onPost("/login").reply(() => {
+    return new Promise(function (resolve) {
+        resolve([200, "TOKEN"]);
+        reject(new Error("Should never error"));
+    });
+});
+
+const flushPromises = () => new Promise(resolve => setImmediate(resolve));
 
 // TODO: Write tests once integrated with everything
-describe('Login Test', () => {
-    fit("should renders without crashing", () => {
-        shallow(<Login setToken={()=>{}}/>);
+fdescribe('Login Test', () => {
+    let token = "";
+
+    beforeAll(async () => {
+        
+        let res = await axios.post("/login", {
+            username: "test",
+            password: "1234"
+        });
+        
+        token = res.data
     });
 
-    xit("correct username and password", () => {
-        testGetToken = (token) =>  {
-            expect(token).toBeDefined();
-        }
-        const wrapper = shallow(<Login setToken={()=>{}}/>);
+    it("should renders without crashing", () => {
+        const history = createMemoryHistory();
+        shallow(<Router history={history}>
+                    <Login setToken={()=>{}}/>
+                </Router>);
+    });
 
-        const input = wrapper.find({ type: "text" });
-        input.simulate('change', { target: { value: 'user' } });
+    it("should return a token", () => {
+        const testGetToken = (token) =>  {
+            expect(token).toBeDefined();
+            expect(token).toBe("TOKEN");
+        }
+
+        const history = createMemoryHistory();
+        shallow(<Router history={history}>
+                    <Login setToken={testGetToken}/>
+                </Router>);
 
     });
 

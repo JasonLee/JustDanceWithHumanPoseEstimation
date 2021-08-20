@@ -1,0 +1,18 @@
+
+.container {
+    display: flex;
+    flex-direction: column;
+    padding:5px;
+
+}
+
+.item {
+    padding: 5px;
+    font-size: 30px;
+}
+
+.scoreItem {
+    padding-left: 20px;
+    left:10px;
+    font-size: 25px;
+}

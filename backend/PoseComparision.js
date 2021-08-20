@@ -20,6 +20,10 @@ exports.compare_poses = (user_pose, actual_pose) => {
     let results = []
 
     for(let i = 0; i < KEYPOINT_NUM; i++) {
+        if(cos[i] == -1) {
+            results.push(-1);
+            continue;
+        }
         results.push(scoreVal(cos[i]))
     }
 
@@ -27,18 +31,19 @@ exports.compare_poses = (user_pose, actual_pose) => {
     return results
 }
 
-function crop_resize_image(keypoints) {
-
-}
-
-function cosine_dist_test(a , b) {
-    let results = [0]
-    // console.log("a", a)
+function cosine_dist_test(user_pose , actual_pose) {
+    let results = [500]
+    console.log("user_pose", user_pose);
+    console.log("actual_pose", actual_pose);
     // console.log("b", b)
 
     for(let i = 1; i < KEYPOINT_NUM; i++) {
-        a1 = subtract(a[i], a[COMPARISION_DICT[i]])
-        b1 = subtract(b[i], b[COMPARISION_DICT[i]])
+        if((user_pose[i][0] == 0 && user_pose[i][1] == 0) || (actual_pose[i][0] == 0 && actual_pose[i][1] == 0)) {
+            results.push(-1);
+            continue;
+        }
+        a1 = subtract(user_pose[i], user_pose[COMPARISION_DICT[i]])
+        b1 = subtract(actual_pose[i], actual_pose[COMPARISION_DICT[i]])
 
         res = 1.0 - sqrt(1.0 - cosine_sim(a1, b1))
         results.push(res)
@@ -49,11 +54,6 @@ function cosine_dist_test(a , b) {
 
 function cosine_sim(a, b) {
     return dot(a, b) / (norm(a) * norm(b))
-}
-
-function score(joint1, joint2) {
-
-    return 300;
 }
 
 function scoreVal(score) {

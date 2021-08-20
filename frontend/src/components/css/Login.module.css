@@ -1,0 +1,43 @@
+.SubmitButton {
+    background-color: #4cafaf;
+    color: white;
+    padding: 14px 20px;
+    margin: 8px 0;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+}
+
+.ImgContainer {
+    text-align: center;
+    margin: 24px 0 12px 0;
+}
+
+.avatar {
+    width: 40%;
+    border-radius: 50%;
+}
+
+.input[type=text], .input[type=password] {
+    max-width: 600px;
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+}
+
+.LoginWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 16px;
+    height: 100%;
+    color: white;
+}
+  
+.error {
+    color: red;
+}

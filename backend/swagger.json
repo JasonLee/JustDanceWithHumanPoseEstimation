@@ -1,0 +1,780 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is the Swagger API documentation for the backend server.",
+    "version": "1.0.0",
+    "title": "Just Dance with Human Pose Estimation Swagger Documentation",
+    "contact": {
+      "email": "psyjl9@nottingham.ac.uk"
+    }
+  },
+  "host": "localhost:8000",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Backend",
+      "description": "Backend Server"
+    }
+  ],
+  "schemes": [
+    "http"
+  ],
+  "paths": {
+    "/login": {
+      "post": {
+        "tags": [
+          "Backend"
+        ],
+        "summary": "Login into account",
+        "description": "",
+        "operationId": "login",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Login details",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Login Successful"
+          },
+          "201": {
+            "description": "Login Attempt Failed"
+          }
+        }
+      }
+    },
+    "/register": {
+      "post": {
+        "tags": [
+          "Backend"
+        ],
+        "summary": "Register an account",
+        "description": "",
+        "operationId": "register",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Login details",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "email": {
+                  "type": "string"
+                },
+                "profilePic": {
+                  "type": "string",
+                  "example": "Base64 Image String"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Account has been created"
+          },
+          "409": {
+            "description": "Unable to create an account - Incorrect Details or Username already in use"
+          }
+        }
+      }
+    },
+    "/verifyAccount": {
+      "post": {
+        "tags": [
+          "Backend"
+        ],
+        "summary": "Verify account with email",
+        "description": "",
+        "operationId": "verify",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "Verify Account",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Email has been Verfied"
+          },
+          "500": {
+            "description": "Email has already been Verfied"
+          }
+        }
+      }
+    },
+    "/getUserDisplayInfo": {
+      "get": {
+        "tags": [
+          "Backend"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Profile Box information",
+        "description": "",
+        "operationId": "getUserDisplayInfo",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Returns username and profile picture",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "username": {
+                  "type": "string"
+                },
+                "profilePic": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getUserSongScores": {
+      "get": {
+        "tags": [
+          "Backend"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Leaderboard user scores",
+        "description": "",
+        "operationId": "getUserSongScores",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "playerID": {
+                  "type": "string"
+                },
+                "songID": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gameID": {
+                    "type": "string"
+                  },
+                  "score": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getGlobalSongScores": {
+      "get": {
+        "tags": [
+          "Backend"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Leaderboard global scores",
+        "description": "",
+        "operationId": "getGlobalSongScores",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "songID": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gameID": {
+                    "type": "string"
+                  },
+                  "score": {
+                    "type": "integer"
+                  },
+                  "user.username": {
+                    "type": "string"
+                  },
+                  "user.profilePic": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/pose_score": {
+      "post": {
+        "tags": [
+          "Backend"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Pose Estimation Call",
+        "description": "",
+        "operationId": "pose_score",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "image": {
+                  "type": "string"
+                },
+                "timestamp": {
+                  "type": "number"
+                },
+                "songName": {
+                  "type": "string"
+                },
+                "gameID": {
+                  "type": "string"
+                },
+                "songID": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Score details and pose information",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "joints": {
+                    "type": "array",
+                    "items": {
+                      "type": "object"
+                    }
+                  },
+                  "mapping": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "truth_joints": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "results": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    }
+                  },
+                  "score": {
+                    "type": "integer"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/createGame": {
+      "post": {
+        "tags": [
+          "Backend"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Create Game",
+        "description": "",
+        "operationId": "createGame",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "songID": {
+                  "type": "integer"
+                },
+                "lobbyID": {
+                  "type": "string"
+                },
+                "playerID": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string"
+                  },
+                  "gameID": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getLobbyScores": {
+      "get": {
+        "tags": [
+          "Backend"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Multiplayer Lobby Scores",
+        "description": "",
+        "operationId": "getLobbyScores",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lobbyID": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "gameID": {
+                    "type": "string"
+                  },
+                  "score": {
+                    "type": "integer"
+                  },
+                  "user.username": {
+                    "type": "string"
+                  },
+                  "user.profilePic": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/finishGame": {
+      "post": {
+        "tags": [
+          "Backend"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Leaderboard global scores",
+        "description": "",
+        "operationId": "finishGame",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "lobbyID": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Game has finished"
+          },
+          "500": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/songs": {
+      "get": {
+        "tags": [
+          "Backend"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Song List",
+        "description": "",
+        "operationId": "songs",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "_id": {
+                    "type": "integer"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "artist": {
+                    "type": "string"
+                  },
+                  "length": {
+                    "type": "string"
+                  },
+                  "creator": {
+                    "type": "string"
+                  },
+                  "difficulty": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/songDetails": {
+      "get": {
+        "tags": [
+          "Backend"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Song Details",
+        "description": "",
+        "operationId": "songDetails",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "songID": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "_id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "artist": {
+                  "type": "string"
+                },
+                "length": {
+                  "type": "string"
+                },
+                "creator": {
+                  "type": "string"
+                },
+                "difficulty": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/getResults": {
+      "get": {
+        "tags": [
+          "Backend"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Song Game Results",
+        "description": "",
+        "operationId": "getResults",
+        "consumes": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "description": "",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "gameID": {
+                  "type": "string"
+                },
+                "lobbyID": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "gameID": {
+                  "type": "string"
+                },
+                "score": {
+                  "type": "number"
+                },
+                "scoreBreakdown": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  }
+                },
+                "songData.name": {
+                  "type": "string"
+                },
+                "user.username": {
+                  "type": "string"
+                },
+                "user.profilePic": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/createLobby": {
+      "post": {
+        "tags": [
+          "Backend"
+        ],
+        "security": [
+          {
+            "Bearer": []
+          }
+        ],
+        "summary": "Create Multiplayer Lobby",
+        "description": "",
+        "operationId": "createLobby",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string"
+                  },
+                  "lobbyID": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "externalDocs": {
+    "description": "Find out more about Swagger",
+    "url": "http://swagger.io"
+  }
+}
