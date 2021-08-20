@@ -8,8 +8,8 @@ cache: npm
 script: 
   - cd frontend
   - npm install
-  - npm 
-  # Commented out due to MongoDB altas cluster being disabled.
+  - npm test
+  # Commented out due to MongoDB altas db cluster being disabled.
   # - cd ../backend
   # - npm install
   # - npm test
