@@ -1,0 +1,22 @@
+
+img {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    width: 150px;
+}
+
+.SongDetails {
+    color: white; 
+    font-family: Verdana;
+    padding: 10px;
+    font-size: 25px;
+}
+
+.SongContainer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: #EBEBEB;
+    width: 100%;
+    max-width: 100%;
+}

@@ -1,0 +1,19 @@
+
+.particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9;
+}
+
+.wrapper {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding-top: 30vh;
+}
+
+.title {
+    font-size: 80px;
+    color: white;
+}

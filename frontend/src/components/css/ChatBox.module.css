@@ -1,0 +1,17 @@
+.List {
+    padding: 16px;
+    background-color: white;
+    width: 100%;
+}
+
+.Container {
+    padding: 16px;
+    color: white;
+    
+}
+
+.input {
+    padding: 5px;
+    width: 80%;
+    font-size: 16px;
+}

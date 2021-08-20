@@ -1,0 +1,14 @@
+
+.Paper {
+    /* position: absolute;
+    bottom: 270px; */
+    max-height: 200px;
+    height: 200px;
+    width: 150px;
+    max-width: 150px;
+    overflow: auto;
+}
+
+.currentItem {
+    background-color: lightgray;
+}
