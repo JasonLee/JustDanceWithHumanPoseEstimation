@@ -39,11 +39,13 @@ def get_bounding_box(keypoints):
     for i in range(KEYPOINT_NUM):
         if min_x > keypoints[i][0]:
             min_x = keypoints[i][0]
+
         if max_x <= keypoints[i][0]:
             max_x = keypoints[i][0]
 
         if min_y > keypoints[i][1]:
             min_y = keypoints[i][1]
+
         if max_y <= keypoints[i][1]:
             max_y = keypoints[i][1]
 
@@ -52,8 +54,11 @@ def get_bounding_box(keypoints):
 def crop_resize_image(input_keypoints):
     input_keypoints = np.delete(input_keypoints, -1, 1)
 
+    print("BOUNDING", input_keypoints)
     # Crop coords
     min_x, min_y, max_x, max_y = get_bounding_box(input_keypoints)
+
+    print("BOUNDING", min_x, min_y, max_x, max_y)
     resize_ratio_x = IMAGE_WIDTH / (max_x - min_x)
     resize_ratio_y = IMAGE_HEIGHT / (max_y - min_y)
 

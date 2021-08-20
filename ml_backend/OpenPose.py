@@ -83,7 +83,6 @@ if __name__ == '__main__':
     
     limb_breakdown(data[0, :15], data2[0, :15])
 
-
     cv2.imshow("similar1", imagecv)
     cv2.imshow("image3", imagecv2)
     cv2.waitKey(0)

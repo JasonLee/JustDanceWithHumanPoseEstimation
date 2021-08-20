@@ -12,6 +12,7 @@
     "@wojtekmaj/enzyme-adapter-react-17": "^0.4.1",
     "axios": "^0.21.1",
     "enzyme": "^3.11.0",
+    "history": "^4.10.1",
     "konva": "^7.2.5",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
@@ -19,8 +20,10 @@
     "react-player": "^2.9.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.2",
+    "react-tsparticles": "^1.26.4",
     "react-webcam": "^5.2.3",
     "socket.io-client": "^4.0.1",
+    "uifx": "^2.0.7",
     "uuid": "^8.3.2",
     "web-vitals": "^1.1.0"
   },
@@ -48,7 +51,7 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://localhost:8000",
+  "proxy": "http://localhost:80",
   "devDependencies": {
     "axios-mock-adapter": "^1.19.0"
   }
